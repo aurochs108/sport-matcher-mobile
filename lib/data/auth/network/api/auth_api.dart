@@ -6,6 +6,23 @@ import 'package:sport_matcher/data/core/api_request/api_result.dart';
 import 'package:sport_matcher/data/core/api_request/http_method.dart';
 
 class AuthApi implements AbstractAuthApi {
+  Future<ApiResult<AuthTokensReponse>> loginWithEmail({
+    required String email,
+    required String password,
+    required String deviceId,
+  }) {
+    return ApiRequest<AuthTokensReponse>(
+      path: '/auth/login/email',
+      method: HttpMethod.post,
+      responseParser: AuthTokensReponse.fromJson,
+      body: {
+        'email': email,
+        'password': password,
+        'deviceId': deviceId,
+      },
+    ).execute();
+  }
+
   @override
   Future<ApiResult<AuthTokensReponse>> registerWithEmail({
     required String email,
