@@ -1,5 +1,4 @@
 import 'package:sport_matcher/data/auth/mapper/auth_tokens_mapper.dart';
-import 'package:sport_matcher/data/auth/network/api/abstract_auth_api.dart';
 import 'package:sport_matcher/data/auth/network/api/auth_api.dart';
 import 'package:sport_matcher/data/auth/persistence/database/abstract_auth_tokens_database.dart';
 import 'package:sport_matcher/data/auth/persistence/database/auth_tokens_database.dart';
@@ -11,14 +10,14 @@ import 'package:sport_matcher/data/device_id/repository/abstract_device_id_repos
 import 'package:sport_matcher/data/device_id/repository/device_id_repository.dart';
 
 class AuthRepository extends AbstractAuthRepository {
-  final AbstractAuthApi _authApi;
+  final AuthApi _authApi;
   final AbstractDeviceIdRepository _deviceIdRepository;
   final AbstractAuthTokensDatabase _tokenDatabase;
   final AuthTokensMapper _mapper;
   final AbstractApiErrorToUserMessageMapper _errorMapper;
 
   AuthRepository({
-    AbstractAuthApi? authApi,
+    AuthApi? authApi,
     AbstractDeviceIdRepository? deviceIdRepository,
     AbstractAuthTokensDatabase? tokenDatabase,
     AuthTokensMapper? mapper,
