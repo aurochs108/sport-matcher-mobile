@@ -27,6 +27,35 @@ class AuthRepository {
        _mapper = mapper ?? AuthTokensMapper(),
        _errorMapper = errorMapper ?? const ApiErrorToUserMessageMapper();
 
+  Future<ApiResult<void>> loginWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final deviceId = await _deviceIdRepository.getDeviceId();
+      final result = await _authApi.loginWithEmail(
+        email: email,
+        password: password,
+        deviceId: deviceId,
+      );
+
+      switch (result) {
+        case ApiSuccess(:final data):
+          final tokens = _mapper.responseToDomain(data);
+          await _tokenDatabase.saveTokens(_mapper.domainToEntity(tokens));
+          return ApiSuccess<void>(null);
+        case ApiError(:final message, :final statusCode, :final code):
+          return ApiError<void>(
+            message,
+            statusCode: statusCode,
+            code: code,
+          );
+      }
+    } catch (error) {
+      return ApiError<void>(_errorMapper.map(error));
+    }
+  }
+
   Future<ApiResult<void>> registerWithEmail({
     required String email,
     required String password,
