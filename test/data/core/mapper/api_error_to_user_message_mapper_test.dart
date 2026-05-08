@@ -17,9 +17,17 @@ void main() {
         message: 'Request timed out. Please try again.',
       ),
       (
-        description: 'socket exceptions',
+        description: 'generic socket exceptions',
         error: const SocketException('No internet'),
         message: 'No internet connection. Please check your network.',
+      ),
+      (
+        description: 'connection refused socket exceptions',
+        error: const SocketException(
+          'Connection refused',
+          osError: OSError('Connection refused', 61),
+        ),
+        message: 'Server is temporarily unavailable. Please try again later.',
       ),
       (
         description: 'TLS exceptions',
@@ -30,6 +38,11 @@ void main() {
         description: 'HTTP client exceptions',
         error: http.ClientException('Client failed'),
         message: 'A network error occurred. Please try again.',
+      ),
+      (
+        description: 'connection refused HTTP client exceptions',
+        error: http.ClientException('Connection refused'),
+        message: 'Server is temporarily unavailable. Please try again later.',
       ),
       (
         description: 'HTTP exceptions',

@@ -10,6 +10,11 @@ class ApiErrorToUserMessageMapper implements AbstractApiErrorToUserMessageMapper
   static const _serverUnavailableMessage =
       'Server is temporarily unavailable. Please try again later.';
   static const _timeoutMessage = 'Request timed out. Please try again.';
+  static const _connectionRefusedErrorCodes = {
+    61,
+    111,
+    10061,
+  };
 
   static const _httpStatusMessages = {
     400: 'Invalid request. Please check your input.',
@@ -34,12 +39,21 @@ class ApiErrorToUserMessageMapper implements AbstractApiErrorToUserMessageMapper
       return _timeoutMessage;
     }
 
+    if (error is SocketException && _isConnectionRefused(error)) {
+      return _serverUnavailableMessage;
+    }
+
     if (error is SocketException) {
       return 'No internet connection. Please check your network.';
     }
 
     if (error is TlsException) {
       return 'Secure connection to the server failed. Please try again.';
+    }
+
+    if (error is http.ClientException &&
+        _isConnectionRefusedMessage(error.message)) {
+      return _serverUnavailableMessage;
     }
 
     if (error is http.ClientException || error is HttpException) {
@@ -51,5 +65,19 @@ class ApiErrorToUserMessageMapper implements AbstractApiErrorToUserMessageMapper
     }
 
     return _genericErrorMessage;
+  }
+
+  bool _isConnectionRefused(SocketException error) {
+    final errorCode = error.osError?.errorCode;
+    if (errorCode != null &&
+        _connectionRefusedErrorCodes.contains(errorCode)) {
+      return true;
+    }
+
+    return _isConnectionRefusedMessage(error.message);
+  }
+
+  bool _isConnectionRefusedMessage(String message) {
+    return message.toLowerCase().contains('connection refused');
   }
 }
