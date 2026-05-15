@@ -10,7 +10,6 @@ import 'package:sport_matcher/data/core/api_request/api_result.dart';
 import 'package:sport_matcher/data/core/api_request/error_response.dart';
 import 'package:sport_matcher/data/core/api_request/http_client_provider.dart';
 import 'package:sport_matcher/data/core/api_request/http_method.dart';
-import 'package:sport_matcher/data/core/mapper/abstract_api_error_to_user_message_mapper.dart';
 import 'package:sport_matcher/data/core/mapper/api_error_to_user_message_mapper.dart';
 
 class ApiRequest<T> {
@@ -20,7 +19,7 @@ class ApiRequest<T> {
   final T Function(Map<String, dynamic>) responseParser;
   final Duration timeout;
   final http.Client _client;
-  final AbstractApiErrorToUserMessageMapper _errorMapper;
+  final ApiErrorToUserMessageMapper _errorMapper;
 
   ApiRequest({
     required this.path,
@@ -29,7 +28,7 @@ class ApiRequest<T> {
     this.body,
     this.timeout = const Duration(seconds: 30),
     http.Client? client,
-    AbstractApiErrorToUserMessageMapper? errorMapper,
+    ApiErrorToUserMessageMapper? errorMapper,
   })  : _client = client ?? HttpClientProvider.instance,
         _errorMapper = errorMapper ?? const ApiErrorToUserMessageMapper();
 

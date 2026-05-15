@@ -3,9 +3,8 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:sport_matcher/data/core/api_request/api_exception.dart';
-import 'package:sport_matcher/data/core/mapper/abstract_api_error_to_user_message_mapper.dart';
 
-class ApiErrorToUserMessageMapper implements AbstractApiErrorToUserMessageMapper {
+class ApiErrorToUserMessageMapper {
   static const _genericErrorMessage = 'Something went wrong. Please try again.';
   static const _serverUnavailableMessage =
       'Server is temporarily unavailable. Please try again later.';
@@ -33,7 +32,6 @@ class ApiErrorToUserMessageMapper implements AbstractApiErrorToUserMessageMapper
 
   const ApiErrorToUserMessageMapper();
 
-  @override
   String map(Object error) {
     if (error is TimeoutException) {
       return _timeoutMessage;

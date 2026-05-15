@@ -17,7 +17,7 @@ import 'package:sport_matcher/data/auth/persistence/database/abstract_auth_token
 import 'package:sport_matcher/data/auth/persistence/entity/auth_tokens_entity.dart'
     as _i3;
 import 'package:sport_matcher/data/core/api_request/api_result.dart' as _i6;
-import 'package:sport_matcher/data/core/mapper/abstract_api_error_to_user_message_mapper.dart'
+import 'package:sport_matcher/data/core/mapper/api_error_to_user_message_mapper.dart'
     as _i12;
 import 'package:sport_matcher/data/device_id/repository/abstract_device_id_repository.dart'
     as _i9;
@@ -178,12 +178,12 @@ class MockAuthTokensMapper extends _i1.Mock implements _i11.AuthTokensMapper {
           as _i3.AuthTokensEntity);
 }
 
-/// A class which mocks [AbstractApiErrorToUserMessageMapper].
+/// A class which mocks [ApiErrorToUserMessageMapper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAbstractApiErrorToUserMessageMapper extends _i1.Mock
-    implements _i12.AbstractApiErrorToUserMessageMapper {
-  MockAbstractApiErrorToUserMessageMapper() {
+class MockApiErrorToUserMessageMapper extends _i1.Mock
+    implements _i12.ApiErrorToUserMessageMapper {
+  MockApiErrorToUserMessageMapper() {
     _i1.throwOnMissingStub(this);
   }
 

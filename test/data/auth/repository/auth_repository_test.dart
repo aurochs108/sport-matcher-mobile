@@ -7,7 +7,7 @@ import 'package:sport_matcher/data/auth/network/response/auth_tokens_reponse.dar
 import 'package:sport_matcher/data/auth/persistence/database/abstract_auth_tokens_database.dart';
 import 'package:sport_matcher/data/auth/repository/auth_repository.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
-import 'package:sport_matcher/data/core/mapper/abstract_api_error_to_user_message_mapper.dart';
+import 'package:sport_matcher/data/core/mapper/api_error_to_user_message_mapper.dart';
 import 'package:sport_matcher/data/device_id/repository/abstract_device_id_repository.dart';
 import 'package:uuid/uuid.dart';
 
@@ -21,7 +21,7 @@ import 'auth_repository_test.mocks.dart';
   AbstractDeviceIdRepository,
   AbstractAuthTokensDatabase,
   AuthTokensMapper,
-  AbstractApiErrorToUserMessageMapper,
+  ApiErrorToUserMessageMapper,
 ])
 void main() {
   provideDummy<ApiResult<AuthTokensReponse>>(
@@ -33,7 +33,7 @@ void main() {
     late MockAbstractDeviceIdRepository deviceIdRepository;
     late MockAbstractAuthTokensDatabase tokenDatabase;
     late MockAuthTokensMapper mapper;
-    late MockAbstractApiErrorToUserMessageMapper errorMapper;
+    late MockApiErrorToUserMessageMapper errorMapper;
     late AuthRepository sut;
 
     setUp(() {
@@ -41,7 +41,7 @@ void main() {
       deviceIdRepository = MockAbstractDeviceIdRepository();
       tokenDatabase = MockAbstractAuthTokensDatabase();
       mapper = MockAuthTokensMapper();
-      errorMapper = MockAbstractApiErrorToUserMessageMapper();
+      errorMapper = MockApiErrorToUserMessageMapper();
       sut = AuthRepository(
         authApi: authApi,
         deviceIdRepository: deviceIdRepository,
