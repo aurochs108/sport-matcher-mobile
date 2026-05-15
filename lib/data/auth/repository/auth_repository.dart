@@ -1,22 +1,24 @@
 import 'package:sport_matcher/data/auth/mapper/auth_tokens_mapper.dart';
+import 'package:sport_matcher/data/auth/network/api/abstract_auth_api.dart';
 import 'package:sport_matcher/data/auth/network/api/auth_api.dart';
 import 'package:sport_matcher/data/auth/persistence/database/abstract_auth_tokens_database.dart';
 import 'package:sport_matcher/data/auth/persistence/database/auth_tokens_database.dart';
+import 'package:sport_matcher/data/auth/repository/abstract_auth_repository.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
 import 'package:sport_matcher/data/core/mapper/abstract_api_error_to_user_message_mapper.dart';
 import 'package:sport_matcher/data/core/mapper/api_error_to_user_message_mapper.dart';
 import 'package:sport_matcher/data/device_id/repository/abstract_device_id_repository.dart';
 import 'package:sport_matcher/data/device_id/repository/device_id_repository.dart';
 
-class AuthRepository {
-  final AuthApi _authApi;
+class AuthRepository implements AbstractAuthRepository {
+  final AbstractAuthApi _authApi;
   final AbstractDeviceIdRepository _deviceIdRepository;
   final AbstractAuthTokensDatabase _tokenDatabase;
   final AuthTokensMapper _mapper;
   final AbstractApiErrorToUserMessageMapper _errorMapper;
 
   AuthRepository({
-    AuthApi? authApi,
+    AbstractAuthApi? authApi,
     AbstractDeviceIdRepository? deviceIdRepository,
     AbstractAuthTokensDatabase? tokenDatabase,
     AuthTokensMapper? mapper,
@@ -27,6 +29,7 @@ class AuthRepository {
        _mapper = mapper ?? AuthTokensMapper(),
        _errorMapper = errorMapper ?? const ApiErrorToUserMessageMapper();
 
+  @override
   Future<ApiResult<void>> loginWithEmail({
     required String email,
     required String password,
@@ -56,6 +59,7 @@ class AuthRepository {
     }
   }
 
+  @override
   Future<ApiResult<void>> registerWithEmail({
     required String email,
     required String password,

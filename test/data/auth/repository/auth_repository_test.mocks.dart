@@ -59,6 +59,31 @@ class MockAbstractAuthApi extends _i1.Mock implements _i4.AbstractAuthApi {
   }
 
   @override
+  _i5.Future<_i6.ApiResult<_i7.AuthTokensReponse>> loginWithEmail({
+    required String? email,
+    required String? password,
+    required String? deviceId,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#loginWithEmail, [], {
+              #email: email,
+              #password: password,
+              #deviceId: deviceId,
+            }),
+            returnValue: _i5.Future<_i6.ApiResult<_i7.AuthTokensReponse>>.value(
+              _i8.dummyValue<_i6.ApiResult<_i7.AuthTokensReponse>>(
+                this,
+                Invocation.method(#loginWithEmail, [], {
+                  #email: email,
+                  #password: password,
+                  #deviceId: deviceId,
+                }),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.ApiResult<_i7.AuthTokensReponse>>);
+
+  @override
   _i5.Future<_i6.ApiResult<_i7.AuthTokensReponse>> registerWithEmail({
     required String? email,
     required String? password,

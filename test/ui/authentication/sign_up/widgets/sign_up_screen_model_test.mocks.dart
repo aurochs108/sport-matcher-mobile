@@ -36,6 +36,28 @@ class MockAbstractAuthRepository extends _i1.Mock
   }
 
   @override
+  _i3.Future<_i4.ApiResult<void>> loginWithEmail({
+    required String? email,
+    required String? password,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#loginWithEmail, [], {
+              #email: email,
+              #password: password,
+            }),
+            returnValue: _i3.Future<_i4.ApiResult<void>>.value(
+              _i5.dummyValue<_i4.ApiResult<void>>(
+                this,
+                Invocation.method(#loginWithEmail, [], {
+                  #email: email,
+                  #password: password,
+                }),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.ApiResult<void>>);
+
+  @override
   _i3.Future<_i4.ApiResult<void>> registerWithEmail({
     required String? email,
     required String? password,
