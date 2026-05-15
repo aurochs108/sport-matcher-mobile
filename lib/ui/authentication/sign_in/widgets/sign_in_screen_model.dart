@@ -3,12 +3,15 @@ import 'package:sport_matcher/data/core/api_request/api_result.dart';
 
 class SignInScreenModel {
   final AuthRepository _authRepository;
+  final void Function() _onLoginSuccess;
 
   String? errorMessage;
 
   SignInScreenModel({
     AuthRepository? authRepository,
-  }) : _authRepository = authRepository ?? AuthRepository();
+    void Function()? onLoginSuccess,
+  }) : _authRepository = authRepository ?? AuthRepository(),
+       _onLoginSuccess = onLoginSuccess ?? (() {});
 
   Future<void> login(String email, String password) async {
     errorMessage = null;
@@ -19,6 +22,7 @@ class SignInScreenModel {
 
     switch (result) {
       case ApiSuccess():
+        _onLoginSuccess();
         return;
       case ApiError(:final message):
         errorMessage = message;

@@ -3,16 +3,35 @@ import 'package:sport_matcher/ui/authentication/email_authentication/widgets/ema
 import 'package:sport_matcher/ui/authentication/sign_in/widgets/sign_in_screen_model.dart';
 import 'package:sport_matcher/ui/bottom_navigation_bar/widgets/bottom_navigation_bar_screen.dart';
 
-class SignInScreen extends StatelessWidget {
-  final SignInScreenModel _viewModel;
+class SignInScreen extends StatefulWidget {
+  final SignInScreenModel? _viewModel;
 
-  SignInScreen({super.key, SignInScreenModel? viewModel})
-      : _viewModel = viewModel ?? SignInScreenModel();
+  const SignInScreen({super.key, SignInScreenModel? viewModel})
+    : _viewModel = viewModel;
 
-  void _navigateToTabbar(BuildContext buildContext) {
-    Navigator.of(buildContext).push(MaterialPageRoute(
-      builder: (buildContext) => BottomNavigationBarScreen(),
-    ));
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  late final SignInScreenModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel =
+        widget._viewModel ??
+        SignInScreenModel(onLoginSuccess: _navigateToTabbar);
+  }
+
+  void _navigateToTabbar() {
+    if (!mounted) {
+      return;
+    }
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => BottomNavigationBarScreen()),
+    );
   }
 
   @override
@@ -28,10 +47,6 @@ class SignInScreen extends StatelessWidget {
               backgroundColor: Colors.red,
             ),
           );
-          return;
-        }
-        if (context.mounted) {
-          _navigateToTabbar(context);
         }
       },
     );
