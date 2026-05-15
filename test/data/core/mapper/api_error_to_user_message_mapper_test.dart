@@ -67,7 +67,7 @@ void main() {
       ),
       (
         description: 'connection refused HTTP client exceptions ignoring case',
-        error: http.ClientException('Connection refused'),
+        error: http.ClientException('CONNECTION REFUSED'),
         message: 'Server is temporarily unavailable. Please try again later.',
       ),
       (
