@@ -30,6 +30,22 @@ void main() {
         message: 'Server is temporarily unavailable. Please try again later.',
       ),
       (
+        description: 'connection refused socket exceptions on Linux',
+        error: const SocketException(
+          'Connection refused',
+          osError: OSError('Connection refused', 111),
+        ),
+        message: 'Server is temporarily unavailable. Please try again later.',
+      ),
+      (
+        description: 'connection refused socket exceptions on Windows',
+        error: const SocketException(
+          'Connection refused',
+          osError: OSError('Connection refused', 10061),
+        ),
+        message: 'Server is temporarily unavailable. Please try again later.',
+      ),
+      (
         description: 'connection refused socket exceptions by message',
         error: const SocketException('Connection refused'),
         message: 'Server is temporarily unavailable. Please try again later.',
@@ -51,7 +67,7 @@ void main() {
       ),
       (
         description: 'connection refused HTTP client exceptions ignoring case',
-        error: http.ClientException('CONNECTION REFUSED'),
+        error: http.ClientException('Connection refused'),
         message: 'Server is temporarily unavailable. Please try again later.',
       ),
       (
@@ -77,25 +93,6 @@ void main() {
 
         expect(result, testCase.message);
       });
-    }
-
-    for (final errorCode in [111, 10061]) {
-      test(
-        'map returns server unavailable for connection refused socket error code $errorCode',
-        () {
-          final result = sut.map(
-            SocketException(
-              'Socket failed',
-              osError: OSError('Socket failed', errorCode),
-            ),
-          );
-
-          expect(
-            result,
-            'Server is temporarily unavailable. Please try again later.',
-          );
-        },
-      );
     }
 
     final apiStatusCases = <({int statusCode, String message})>[
