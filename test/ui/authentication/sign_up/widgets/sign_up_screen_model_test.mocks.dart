@@ -7,8 +7,7 @@ import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
-import 'package:sport_matcher/data/auth/repository/abstract_auth_repository.dart'
-    as _i2;
+import 'package:sport_matcher/data/auth/repository/auth_repository.dart' as _i2;
 import 'package:sport_matcher/data/core/api_request/api_result.dart' as _i4;
 
 // ignore_for_file: type=lint
@@ -26,12 +25,11 @@ import 'package:sport_matcher/data/core/api_request/api_result.dart' as _i4;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-/// A class which mocks [AbstractAuthRepository].
+/// A class which mocks [AuthRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAbstractAuthRepository extends _i1.Mock
-    implements _i2.AbstractAuthRepository {
-  MockAbstractAuthRepository() {
+class MockAuthRepository extends _i1.Mock implements _i2.AuthRepository {
+  MockAuthRepository() {
     _i1.throwOnMissingStub(this);
   }
 

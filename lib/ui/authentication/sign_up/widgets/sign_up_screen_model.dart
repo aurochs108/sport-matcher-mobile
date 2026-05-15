@@ -1,14 +1,13 @@
-import 'package:sport_matcher/data/auth/repository/abstract_auth_repository.dart';
 import 'package:sport_matcher/data/auth/repository/auth_repository.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
 
 class SignUpScreenModel {
-  final AbstractAuthRepository _authRepository;
+  final AuthRepository _authRepository;
 
   String? errorMessage;
 
   SignUpScreenModel({
-    AbstractAuthRepository? authRepository,
+    AuthRepository? authRepository,
   }) : _authRepository = authRepository ?? AuthRepository();
 
   Future<void> register(String email, String password) async {

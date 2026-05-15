@@ -1,12 +1,10 @@
-import 'package:sport_matcher/data/auth/network/api/abstract_auth_api.dart';
 import 'package:sport_matcher/data/auth/network/request/email_registration_request.dart';
 import 'package:sport_matcher/data/auth/network/response/auth_tokens_reponse.dart';
 import 'package:sport_matcher/data/core/api_request/api_request.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
 import 'package:sport_matcher/data/core/api_request/http_method.dart';
 
-class AuthApi implements AbstractAuthApi {
-  @override
+class AuthApi {
   Future<ApiResult<AuthTokensReponse>> loginWithEmail({
     required String email,
     required String password,
@@ -24,7 +22,6 @@ class AuthApi implements AbstractAuthApi {
     ).execute();
   }
 
-  @override
   Future<ApiResult<AuthTokensReponse>> registerWithEmail({
     required String email,
     required String password,

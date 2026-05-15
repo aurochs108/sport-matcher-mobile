@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:sport_matcher/data/auth/mapper/auth_tokens_mapper.dart';
-import 'package:sport_matcher/data/auth/network/api/abstract_auth_api.dart';
+import 'package:sport_matcher/data/auth/network/api/auth_api.dart';
 import 'package:sport_matcher/data/auth/network/response/auth_tokens_reponse.dart';
 import 'package:sport_matcher/data/auth/persistence/database/abstract_auth_tokens_database.dart';
 import 'package:sport_matcher/data/auth/repository/auth_repository.dart';
@@ -17,7 +17,7 @@ import '../../../random/auth_tokens_response_random.dart';
 import 'auth_repository_test.mocks.dart';
 
 @GenerateMocks([
-  AbstractAuthApi,
+  AuthApi,
   AbstractDeviceIdRepository,
   AbstractAuthTokensDatabase,
   AuthTokensMapper,
@@ -29,7 +29,7 @@ void main() {
   );
 
   group('AuthRepository', () {
-    late MockAbstractAuthApi authApi;
+    late MockAuthApi authApi;
     late MockAbstractDeviceIdRepository deviceIdRepository;
     late MockAbstractAuthTokensDatabase tokenDatabase;
     late MockAuthTokensMapper mapper;
@@ -37,7 +37,7 @@ void main() {
     late AuthRepository sut;
 
     setUp(() {
-      authApi = MockAbstractAuthApi();
+      authApi = MockAuthApi();
       deviceIdRepository = MockAbstractDeviceIdRepository();
       tokenDatabase = MockAbstractAuthTokensDatabase();
       mapper = MockAuthTokensMapper();

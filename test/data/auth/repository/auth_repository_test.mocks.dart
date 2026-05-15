@@ -9,8 +9,7 @@ import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i8;
 import 'package:sport_matcher/data/auth/domain/auth_tokens.dart' as _i2;
 import 'package:sport_matcher/data/auth/mapper/auth_tokens_mapper.dart' as _i11;
-import 'package:sport_matcher/data/auth/network/api/abstract_auth_api.dart'
-    as _i4;
+import 'package:sport_matcher/data/auth/network/api/auth_api.dart' as _i4;
 import 'package:sport_matcher/data/auth/network/response/auth_tokens_reponse.dart'
     as _i7;
 import 'package:sport_matcher/data/auth/persistence/database/abstract_auth_tokens_database.dart'
@@ -50,11 +49,11 @@ class _FakeAuthTokensEntity_1 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-/// A class which mocks [AbstractAuthApi].
+/// A class which mocks [AuthApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAbstractAuthApi extends _i1.Mock implements _i4.AbstractAuthApi {
-  MockAbstractAuthApi() {
+class MockAuthApi extends _i1.Mock implements _i4.AuthApi {
+  MockAuthApi() {
     _i1.throwOnMissingStub(this);
   }
 
