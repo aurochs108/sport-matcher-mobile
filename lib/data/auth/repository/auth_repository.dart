@@ -43,12 +43,8 @@ class AuthRepository {
           final tokens = _mapper.responseToDomain(data);
           await _tokenDatabase.saveTokens(_mapper.domainToEntity(tokens));
           return ApiSuccess<void>(null);
-        case ApiError(:final message, :final statusCode, :final code):
-          return ApiError<void>(
-            message,
-            statusCode: statusCode,
-            code: code,
-          );
+        case ApiError():
+          return _mapError(result);
       }
     } catch (error) {
       return ApiError<void>(_errorMapper.map(error));
@@ -72,15 +68,19 @@ class AuthRepository {
           final tokens = _mapper.responseToDomain(data);
           await _tokenDatabase.saveTokens(_mapper.domainToEntity(tokens));
           return ApiSuccess<void>(null);
-        case ApiError(:final message, :final statusCode, :final code):
-          return ApiError<void>(
-            message,
-            statusCode: statusCode,
-            code: code,
-          );
+        case ApiError():
+          return _mapError(result);
       }
     } catch (error) {
       return ApiError<void>(_errorMapper.map(error));
     }
+  }
+
+  ApiError<void> _mapError<T>(ApiError<T> error) {
+    return ApiError<void>(
+      error.message,
+      statusCode: error.statusCode,
+      code: error.code,
+    );
   }
 }
