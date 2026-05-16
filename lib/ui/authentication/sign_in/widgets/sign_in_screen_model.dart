@@ -27,7 +27,6 @@ class SignInScreenModel {
     switch (result) {
       case ApiSuccess():
         _navigateToTabbar(navigator);
-        return;
       case ApiError(:final message, :final code):
         errorMessage = code == 'INVALID_LOGIN_CREDENTIALS'
             ? 'Invalid login or password.'
