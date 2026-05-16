@@ -37,7 +37,7 @@ void main() {
         sut.errorMessage = 'previous error';
         final observer = TestNavigatorObserver();
         final buildContext =
-            await BuildContextProvider.getWithObserverAndScaffold(
+            await BuildContextProvider.getWithObserver(
               tester,
               observer,
             );
@@ -76,7 +76,7 @@ void main() {
       ).thenAnswer((_) async => const ApiError<void>('Login failed'));
       final observer = TestNavigatorObserver();
       final buildContext =
-          await BuildContextProvider.getWithObserverAndScaffold(
+          await BuildContextProvider.getWithObserver(
             tester,
             observer,
           );
@@ -123,7 +123,7 @@ void main() {
         );
         final observer = TestNavigatorObserver();
         final buildContext =
-            await BuildContextProvider.getWithObserverAndScaffold(
+            await BuildContextProvider.getWithObserver(
               tester,
               observer,
             );

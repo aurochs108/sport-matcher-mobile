@@ -29,27 +29,6 @@ class BuildContextProvider {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: Builder(
-          builder: (context) {
-            buildContext = context;
-            return const SizedBox();
-          },
-        ),
-        navigatorObservers: [observer],
-      ),
-    );
-
-    return buildContext;
-  }
-
-  static Future<BuildContext> getWithObserverAndScaffold(
-    WidgetTester tester,
-    TestNavigatorObserver observer,
-  ) async {
-    late BuildContext buildContext;
-
-    await tester.pumpWidget(
-      MaterialApp(
         home: Scaffold(
           body: Builder(
             builder: (context) {
