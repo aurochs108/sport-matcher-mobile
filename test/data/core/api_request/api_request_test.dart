@@ -10,11 +10,11 @@ import 'package:sport_matcher/data/core/api_request/api_exception.dart';
 import 'package:sport_matcher/data/core/api_request/api_request.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
 import 'package:sport_matcher/data/core/api_request/http_method.dart';
-import 'package:sport_matcher/data/core/mapper/abstract_api_error_to_user_message_mapper.dart';
+import 'package:sport_matcher/data/core/mapper/api_error_to_user_message_mapper.dart';
 
 import 'api_request_test.mocks.dart';
 
-@GenerateMocks([AbstractApiErrorToUserMessageMapper])
+@GenerateMocks([ApiErrorToUserMessageMapper])
 void main() {
   group('ApiRequest', () {
     for (final responseStatusCode in [200, 299]) {
@@ -58,7 +58,7 @@ void main() {
     test(
       'execute returns mapped error with status code when success body cannot be parsed',
       () async {
-        final errorMapper = MockAbstractApiErrorToUserMessageMapper();
+        final errorMapper = MockApiErrorToUserMessageMapper();
         final client = MockClient((request) async {
           return http.Response('not-json', 200);
         });
@@ -83,7 +83,7 @@ void main() {
     test(
       'execute returns mapped error with status code and code for parsed error response',
       () async {
-        final errorMapper = MockAbstractApiErrorToUserMessageMapper();
+        final errorMapper = MockApiErrorToUserMessageMapper();
         final client = MockClient((request) async {
           return http.Response(
             jsonEncode({'code': 'EMAIL_ALREADY_REGISTERED'}),
@@ -115,7 +115,7 @@ void main() {
     test(
       'execute returns mapped error with status code when error response cannot be parsed',
       () async {
-        final errorMapper = MockAbstractApiErrorToUserMessageMapper();
+        final errorMapper = MockApiErrorToUserMessageMapper();
         final client = MockClient((request) async {
           return http.Response('not-json', 500);
         });
@@ -142,7 +142,7 @@ void main() {
     );
 
     test('execute returns mapped error when client throws', () async {
-      final errorMapper = MockAbstractApiErrorToUserMessageMapper();
+      final errorMapper = MockApiErrorToUserMessageMapper();
       final exception = http.ClientException('network failed');
       final client = MockClient((request) async {
         throw exception;

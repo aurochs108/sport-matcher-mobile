@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i3;
-import 'package:sport_matcher/data/core/mapper/abstract_api_error_to_user_message_mapper.dart'
+import 'package:sport_matcher/data/core/mapper/api_error_to_user_message_mapper.dart'
     as _i2;
 
 // ignore_for_file: type=lint
@@ -23,12 +23,12 @@ import 'package:sport_matcher/data/core/mapper/abstract_api_error_to_user_messag
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-/// A class which mocks [AbstractApiErrorToUserMessageMapper].
+/// A class which mocks [ApiErrorToUserMessageMapper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAbstractApiErrorToUserMessageMapper extends _i1.Mock
-    implements _i2.AbstractApiErrorToUserMessageMapper {
-  MockAbstractApiErrorToUserMessageMapper() {
+class MockApiErrorToUserMessageMapper extends _i1.Mock
+    implements _i2.ApiErrorToUserMessageMapper {
+  MockApiErrorToUserMessageMapper() {
     _i1.throwOnMissingStub(this);
   }
 

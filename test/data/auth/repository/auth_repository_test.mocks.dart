@@ -9,8 +9,7 @@ import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i8;
 import 'package:sport_matcher/data/auth/domain/auth_tokens.dart' as _i2;
 import 'package:sport_matcher/data/auth/mapper/auth_tokens_mapper.dart' as _i11;
-import 'package:sport_matcher/data/auth/network/api/abstract_auth_api.dart'
-    as _i4;
+import 'package:sport_matcher/data/auth/network/api/auth_api.dart' as _i4;
 import 'package:sport_matcher/data/auth/network/response/auth_tokens_reponse.dart'
     as _i7;
 import 'package:sport_matcher/data/auth/persistence/database/abstract_auth_tokens_database.dart'
@@ -18,7 +17,7 @@ import 'package:sport_matcher/data/auth/persistence/database/abstract_auth_token
 import 'package:sport_matcher/data/auth/persistence/entity/auth_tokens_entity.dart'
     as _i3;
 import 'package:sport_matcher/data/core/api_request/api_result.dart' as _i6;
-import 'package:sport_matcher/data/core/mapper/abstract_api_error_to_user_message_mapper.dart'
+import 'package:sport_matcher/data/core/mapper/api_error_to_user_message_mapper.dart'
     as _i12;
 import 'package:sport_matcher/data/device_id/repository/abstract_device_id_repository.dart'
     as _i9;
@@ -50,13 +49,38 @@ class _FakeAuthTokensEntity_1 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-/// A class which mocks [AbstractAuthApi].
+/// A class which mocks [AuthApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAbstractAuthApi extends _i1.Mock implements _i4.AbstractAuthApi {
-  MockAbstractAuthApi() {
+class MockAuthApi extends _i1.Mock implements _i4.AuthApi {
+  MockAuthApi() {
     _i1.throwOnMissingStub(this);
   }
+
+  @override
+  _i5.Future<_i6.ApiResult<_i7.AuthTokensReponse>> loginWithEmail({
+    required String? email,
+    required String? password,
+    required String? deviceId,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#loginWithEmail, [], {
+              #email: email,
+              #password: password,
+              #deviceId: deviceId,
+            }),
+            returnValue: _i5.Future<_i6.ApiResult<_i7.AuthTokensReponse>>.value(
+              _i8.dummyValue<_i6.ApiResult<_i7.AuthTokensReponse>>(
+                this,
+                Invocation.method(#loginWithEmail, [], {
+                  #email: email,
+                  #password: password,
+                  #deviceId: deviceId,
+                }),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.ApiResult<_i7.AuthTokensReponse>>);
 
   @override
   _i5.Future<_i6.ApiResult<_i7.AuthTokensReponse>> registerWithEmail({
@@ -154,12 +178,12 @@ class MockAuthTokensMapper extends _i1.Mock implements _i11.AuthTokensMapper {
           as _i3.AuthTokensEntity);
 }
 
-/// A class which mocks [AbstractApiErrorToUserMessageMapper].
+/// A class which mocks [ApiErrorToUserMessageMapper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAbstractApiErrorToUserMessageMapper extends _i1.Mock
-    implements _i12.AbstractApiErrorToUserMessageMapper {
-  MockAbstractApiErrorToUserMessageMapper() {
+class MockApiErrorToUserMessageMapper extends _i1.Mock
+    implements _i12.ApiErrorToUserMessageMapper {
+  MockApiErrorToUserMessageMapper() {
     _i1.throwOnMissingStub(this);
   }
 

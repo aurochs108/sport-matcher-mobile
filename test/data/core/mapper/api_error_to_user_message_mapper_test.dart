@@ -17,9 +17,38 @@ void main() {
         message: 'Request timed out. Please try again.',
       ),
       (
-        description: 'socket exceptions',
+        description: 'generic socket exceptions',
         error: const SocketException('No internet'),
         message: 'No internet connection. Please check your network.',
+      ),
+      (
+        description: 'connection refused socket exceptions',
+        error: const SocketException(
+          'Connection refused',
+          osError: OSError('Connection refused', 61),
+        ),
+        message: 'Server is temporarily unavailable. Please try again later.',
+      ),
+      (
+        description: 'connection refused socket exceptions on Linux',
+        error: const SocketException(
+          'Connection refused',
+          osError: OSError('Connection refused', 111),
+        ),
+        message: 'Server is temporarily unavailable. Please try again later.',
+      ),
+      (
+        description: 'connection refused socket exceptions on Windows',
+        error: const SocketException(
+          'Connection refused',
+          osError: OSError('Connection refused', 10061),
+        ),
+        message: 'Server is temporarily unavailable. Please try again later.',
+      ),
+      (
+        description: 'connection refused socket exceptions by message',
+        error: const SocketException('Connection refused'),
+        message: 'Server is temporarily unavailable. Please try again later.',
       ),
       (
         description: 'TLS exceptions',
@@ -30,6 +59,16 @@ void main() {
         description: 'HTTP client exceptions',
         error: http.ClientException('Client failed'),
         message: 'A network error occurred. Please try again.',
+      ),
+      (
+        description: 'connection refused HTTP client exceptions',
+        error: http.ClientException('Connection refused'),
+        message: 'Server is temporarily unavailable. Please try again later.',
+      ),
+      (
+        description: 'connection refused HTTP client exceptions ignoring case',
+        error: http.ClientException('CONNECTION REFUSED'),
+        message: 'Server is temporarily unavailable. Please try again later.',
       ),
       (
         description: 'HTTP exceptions',
