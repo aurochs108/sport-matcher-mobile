@@ -84,6 +84,35 @@ void main() {
     );
 
     testWidgets(
+      'login maps invalid credentials code to user-friendly message',
+      (WidgetTester tester) async {
+        when(
+          authRepository.loginWithEmail(
+            email: 'user@example.com',
+            password: 'wrong-password',
+          ),
+        ).thenAnswer(
+          (_) async => const ApiError<void>(
+            'Unauthorized. Please sign in again.',
+            statusCode: 401,
+            code: 'INVALID_LOGIN_CREDENTIALS',
+          ),
+        );
+        final observer = TestNavigatorObserver();
+        final buildContext =
+            await BuildContextProvider.getWithObserver(tester, observer);
+        final navigator = Navigator.of(buildContext);
+
+        await sut.login('user@example.com', 'wrong-password', navigator);
+        await tester.pumpAndSettle();
+
+        expect(sut.errorMessage, 'Invalid login or password.');
+        expect(observer.replaceCount, 0);
+        expect(find.byType(BottomNavigationBarScreen), findsNothing);
+      },
+    );
+
+    testWidgets(
       'showErrorMessage shows snackbar when error exists',
       (WidgetTester tester) async {
         await tester.pumpWidget(

@@ -4,6 +4,9 @@ import 'package:sport_matcher/data/core/api_request/api_result.dart';
 import 'package:sport_matcher/ui/bottom_navigation_bar/widgets/bottom_navigation_bar_screen.dart';
 
 class SignInScreenModel {
+  static const _invalidLoginCredentialsMessage =
+      'Invalid login or password.';
+
   final AuthRepository _authRepository;
 
   String? errorMessage;
@@ -27,8 +30,10 @@ class SignInScreenModel {
       case ApiSuccess():
         _navigateToTabbar(navigator);
         return;
-      case ApiError(:final message):
-        errorMessage = message;
+      case ApiError(:final message, :final code):
+        errorMessage = code == 'INVALID_LOGIN_CREDENTIALS'
+            ? _invalidLoginCredentialsMessage
+            : message;
     }
   }
 

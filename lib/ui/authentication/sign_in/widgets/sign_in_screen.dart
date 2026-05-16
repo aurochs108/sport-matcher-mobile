@@ -2,24 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:sport_matcher/ui/authentication/email_authentication/widgets/email_authentication_screen.dart';
 import 'package:sport_matcher/ui/authentication/sign_in/widgets/sign_in_screen_model.dart';
 
-class SignInScreen extends StatefulWidget {
-  final SignInScreenModel? _viewModel;
+class SignInScreen extends StatelessWidget {
+  final SignInScreenModel _viewModel;
 
-  const SignInScreen({super.key, SignInScreenModel? viewModel})
-    : _viewModel = viewModel;
-
-  @override
-  State<SignInScreen> createState() => _SignInScreenState();
-}
-
-class _SignInScreenState extends State<SignInScreen> {
-  late final SignInScreenModel _viewModel;
-
-  @override
-  void initState() {
-    super.initState();
-    _viewModel = widget._viewModel ?? SignInScreenModel();
-  }
+  SignInScreen({super.key, SignInScreenModel? viewModel})
+    : _viewModel = viewModel ?? SignInScreenModel();
 
   @override
   Widget build(BuildContext context) {
