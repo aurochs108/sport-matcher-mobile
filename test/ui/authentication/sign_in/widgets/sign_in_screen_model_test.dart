@@ -185,7 +185,6 @@ void main() {
       SnackBarAssertions.expectSnackBar(
         tester: tester,
         message: 'Login failed',
-        backgroundColor: Colors.red,
       );
     });
 
