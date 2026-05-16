@@ -1,0 +1,37 @@
+version: 2
+updates:
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "cron"
+      cronjob: "0 5 * * *"
+      timezone: "Europe/Warsaw"
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    reviewers:
+      - "aurochs108"
+
+  - package-ecosystem: "gradle"
+    directory: "/android"
+    schedule:
+      interval: "cron"
+      cronjob: "0 5 * * *"
+      timezone: "Europe/Warsaw"
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    reviewers:
+      - "aurochs108"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "cron"
+      cronjob: "0 5 * * *"
+      timezone: "Europe/Warsaw"
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    reviewers:
+      - "aurochs108"
