@@ -19,6 +19,7 @@ class SignInScreenModel {
     String email,
     String password,
     NavigatorState navigator,
+    ScaffoldMessengerState scaffoldMessenger,
   ) async {
     errorMessage = null;
     final result = await _authRepository.loginWithEmail(
@@ -34,6 +35,7 @@ class SignInScreenModel {
         errorMessage = code == 'INVALID_LOGIN_CREDENTIALS'
             ? _invalidLoginCredentialsMessage
             : message;
+        _showErrorMessage(scaffoldMessenger);
     }
   }
 
@@ -47,7 +49,7 @@ class SignInScreenModel {
     );
   }
 
-  void showErrorMessage(ScaffoldMessengerState scaffoldMessenger) {
+  void _showErrorMessage(ScaffoldMessengerState scaffoldMessenger) {
     final message = errorMessage;
     if (message == null || !scaffoldMessenger.mounted) {
       return;

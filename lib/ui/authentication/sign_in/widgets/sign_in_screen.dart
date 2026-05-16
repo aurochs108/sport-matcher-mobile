@@ -16,8 +16,12 @@ class SignInScreen extends StatelessWidget {
         final navigator = Navigator.of(context);
         final scaffoldMessenger = ScaffoldMessenger.of(context);
 
-        await _viewModel.login(email, password, navigator);
-        _viewModel.showErrorMessage(scaffoldMessenger);
+        await _viewModel.login(
+          email,
+          password,
+          navigator,
+          scaffoldMessenger,
+        );
       },
     );
   }
