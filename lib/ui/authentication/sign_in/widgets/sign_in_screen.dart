@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sport_matcher/ui/authentication/email_authentication/widgets/email_authentication_screen.dart';
 import 'package:sport_matcher/ui/authentication/sign_in/widgets/sign_in_screen_model.dart';
-import 'package:sport_matcher/ui/bottom_navigation_bar/widgets/bottom_navigation_bar_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   final SignInScreenModel? _viewModel;
@@ -19,19 +18,7 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel =
-        widget._viewModel ??
-        SignInScreenModel(onLoginSuccess: _navigateToTabbar);
-  }
-
-  void _navigateToTabbar() {
-    if (!mounted) {
-      return;
-    }
-
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => BottomNavigationBarScreen()),
-    );
+    _viewModel = widget._viewModel ?? SignInScreenModel();
   }
 
   @override
@@ -39,15 +26,11 @@ class _SignInScreenState extends State<SignInScreen> {
     return EmailAuthenticationScreen(
       title: "Sign in",
       onFinishProcessButtonAction: (email, password) async {
-        await _viewModel.login(email, password);
-        if (_viewModel.errorMessage != null && context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(_viewModel.errorMessage!),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
+        final navigator = Navigator.of(context);
+        final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+        await _viewModel.login(email, password, navigator);
+        _viewModel.showErrorMessage(scaffoldMessenger);
       },
     );
   }

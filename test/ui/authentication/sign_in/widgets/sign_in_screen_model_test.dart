@@ -1,109 +1,143 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sport_matcher/data/auth/network/api/auth_api.dart';
-import 'package:sport_matcher/data/auth/network/response/auth_tokens_reponse.dart';
-import 'package:sport_matcher/data/auth/persistence/database/abstract_auth_tokens_database.dart';
-import 'package:sport_matcher/data/auth/persistence/entity/auth_tokens_entity.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:sport_matcher/data/auth/repository/auth_repository.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
-import 'package:sport_matcher/data/device_id/repository/abstract_device_id_repository.dart';
 import 'package:sport_matcher/ui/authentication/sign_in/widgets/sign_in_screen_model.dart';
+import 'package:sport_matcher/ui/bottom_navigation_bar/widgets/bottom_navigation_bar_screen.dart';
 
+import '../../../../mocks/mock_navigator_observer.dart';
+import '../../../../utilities/build_context_provider.dart';
+import 'sign_in_screen_model_test.mocks.dart';
+
+@GenerateMocks([AuthRepository])
 void main() {
+  provideDummy<ApiResult<void>>(const ApiError<void>('dummy error'));
+
   group('SignInScreenModel', () {
-    late _FakeAuthRepository authRepository;
-    late int onLoginSuccessCallsCount;
+    late MockAuthRepository authRepository;
     late SignInScreenModel sut;
 
     setUp(() {
-      authRepository = _FakeAuthRepository();
-      onLoginSuccessCallsCount = 0;
-      sut = SignInScreenModel(
-        authRepository: authRepository,
-        onLoginSuccess: () {
-          onLoginSuccessCallsCount += 1;
-        },
-      );
+      authRepository = MockAuthRepository();
+      sut = SignInScreenModel(authRepository: authRepository);
     });
 
-    test(
-      'login calls repository, clears previous error, and notifies success',
-      () async {
-        authRepository.result = ApiSuccess<void>(null);
+    testWidgets(
+      'login calls repository, clears previous error, and navigates to tabbar',
+      (WidgetTester tester) async {
+        when(
+          authRepository.loginWithEmail(
+            email: 'user@example.com',
+            password: 'strong-password',
+          ),
+        ).thenAnswer((_) async => ApiSuccess<void>(null));
         sut.errorMessage = 'previous error';
+        final observer = TestNavigatorObserver();
+        final buildContext =
+            await BuildContextProvider.getWithObserver(tester, observer);
+        final navigator = Navigator.of(buildContext);
 
-        await sut.login('user@example.com', 'strong-password');
+        await sut.login('user@example.com', 'strong-password', navigator);
+        await tester.pumpAndSettle();
 
         expect(sut.errorMessage, isNull);
-        expect(authRepository.loginWithEmailCallsCount, 1);
-        expect(authRepository.lastEmail, 'user@example.com');
-        expect(authRepository.lastPassword, 'strong-password');
-        expect(onLoginSuccessCallsCount, 1);
+        verify(
+          authRepository.loginWithEmail(
+            email: 'user@example.com',
+            password: 'strong-password',
+          ),
+        ).called(1);
+        expect(observer.lastReplacedNewRoute, isA<MaterialPageRoute>());
+        expect(find.byType(BottomNavigationBarScreen), findsOneWidget);
       },
     );
 
-    test('login stores repository error and does not notify success', () async {
-      authRepository.result = const ApiError<void>('Login failed');
+    testWidgets(
+      'login stores repository error and does not navigate',
+      (WidgetTester tester) async {
+        when(
+          authRepository.loginWithEmail(
+            email: 'user@example.com',
+            password: 'wrong-password',
+          ),
+        ).thenAnswer((_) async => const ApiError<void>('Login failed'));
+        final observer = TestNavigatorObserver();
+        final buildContext =
+            await BuildContextProvider.getWithObserver(tester, observer);
+        final navigator = Navigator.of(buildContext);
 
-      await sut.login('user@example.com', 'wrong-password');
+        await sut.login('user@example.com', 'wrong-password', navigator);
+        await tester.pumpAndSettle();
 
-      expect(sut.errorMessage, 'Login failed');
-      expect(authRepository.loginWithEmailCallsCount, 1);
-      expect(onLoginSuccessCallsCount, 0);
-    });
+        expect(sut.errorMessage, 'Login failed');
+        verify(
+          authRepository.loginWithEmail(
+            email: 'user@example.com',
+            password: 'wrong-password',
+          ),
+        ).called(1);
+        expect(observer.replaceCount, 0);
+        expect(find.byType(BottomNavigationBarScreen), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'showErrorMessage shows snackbar when error exists',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Builder(
+                builder: (context) {
+                  return TextButton(
+                    onPressed: () {
+                      sut.errorMessage = 'Login failed';
+                      sut.showErrorMessage(ScaffoldMessenger.of(context));
+                    },
+                    child: const Text('Show error'),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Show error'));
+        await tester.pump();
+
+        expect(find.text('Login failed'), findsOneWidget);
+        final snackBar = tester.widget<SnackBar>(find.byType(SnackBar));
+        expect(snackBar.backgroundColor, Colors.red);
+      },
+    );
+
+    testWidgets(
+      'showErrorMessage does nothing when error is null',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Builder(
+                builder: (context) {
+                  return TextButton(
+                    onPressed: () {
+                      sut.showErrorMessage(ScaffoldMessenger.of(context));
+                    },
+                    child: const Text('Show error'),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Show error'));
+        await tester.pump();
+
+        expect(find.byType(SnackBar), findsNothing);
+      },
+    );
   });
-}
-
-class _FakeAuthRepository extends AuthRepository {
-  _FakeAuthRepository()
-    : super(
-        authApi: _FakeAuthApi(),
-        deviceIdRepository: _FakeDeviceIdRepository(),
-        tokenDatabase: _FakeAuthTokensDatabase(),
-      );
-
-  ApiResult<void> result = ApiSuccess<void>(null);
-  int loginWithEmailCallsCount = 0;
-  String? lastEmail;
-  String? lastPassword;
-
-  @override
-  Future<ApiResult<void>> loginWithEmail({
-    required String email,
-    required String password,
-  }) async {
-    loginWithEmailCallsCount += 1;
-    lastEmail = email;
-    lastPassword = password;
-    return result;
-  }
-}
-
-class _FakeAuthApi extends AuthApi {
-  @override
-  Future<ApiResult<AuthTokensReponse>> loginWithEmail({
-    required String email,
-    required String password,
-    required String deviceId,
-  }) async {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<ApiResult<AuthTokensReponse>> registerWithEmail({
-    required String email,
-    required String password,
-    required String deviceId,
-  }) async {
-    throw UnimplementedError();
-  }
-}
-
-class _FakeDeviceIdRepository implements AbstractDeviceIdRepository {
-  @override
-  Future<String> getDeviceId() async => 'device-id';
-}
-
-class _FakeAuthTokensDatabase implements AbstractAuthTokensDatabase {
-  @override
-  Future<void> saveTokens(AuthTokensEntity entity) async {}
 }
