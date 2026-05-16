@@ -9,6 +9,7 @@ import 'package:sport_matcher/ui/bottom_navigation_bar/widgets/bottom_navigation
 
 import '../../../../mocks/mock_navigator_observer.dart';
 import '../../../../utilities/build_context_provider.dart';
+import '../../../../utilities/snack_bar_assertions.dart';
 import 'sign_in_screen_model_test.mocks.dart';
 
 @GenerateMocks([AuthRepository])
@@ -36,7 +37,10 @@ void main() {
         sut.errorMessage = 'previous error';
         final observer = TestNavigatorObserver();
         final buildContext =
-            await BuildContextProvider.getWithObserver(tester, observer);
+            await BuildContextProvider.getWithObserverAndScaffold(
+              tester,
+              observer,
+            );
         final navigator = Navigator.of(buildContext);
         final scaffoldMessenger = ScaffoldMessenger.of(buildContext);
 
@@ -49,6 +53,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(sut.errorMessage, isNull);
+        SnackBarAssertions.expectSnackBarIsNotVisible();
         verify(
           authRepository.loginWithEmail(
             email: 'user@example.com',
@@ -60,40 +65,45 @@ void main() {
       },
     );
 
-    testWidgets(
-      'login stores repository error and does not navigate',
-      (WidgetTester tester) async {
-        when(
-          authRepository.loginWithEmail(
-            email: 'user@example.com',
-            password: 'wrong-password',
-          ),
-        ).thenAnswer((_) async => const ApiError<void>('Login failed'));
-        final observer = TestNavigatorObserver();
-        final buildContext =
-            await BuildContextProvider.getWithObserver(tester, observer);
-        final navigator = Navigator.of(buildContext);
-        final scaffoldMessenger = ScaffoldMessenger.of(buildContext);
+    testWidgets('login stores repository error and does not navigate', (
+      WidgetTester tester,
+    ) async {
+      when(
+        authRepository.loginWithEmail(
+          email: 'user@example.com',
+          password: 'wrong-password',
+        ),
+      ).thenAnswer((_) async => const ApiError<void>('Login failed'));
+      final observer = TestNavigatorObserver();
+      final buildContext = await BuildContextProvider.getWithObserverAndScaffold(
+        tester,
+        observer,
+      );
+      final navigator = Navigator.of(buildContext);
+      final scaffoldMessenger = ScaffoldMessenger.of(buildContext);
 
-        await sut.login(
-          'user@example.com',
-          'wrong-password',
-          navigator,
-          scaffoldMessenger,
-        );
-        await tester.pumpAndSettle();
+      await sut.login(
+        'user@example.com',
+        'wrong-password',
+        navigator,
+        scaffoldMessenger,
+      );
+      await tester.pump();
 
-        expect(sut.errorMessage, 'Login failed');
-        verify(
-          authRepository.loginWithEmail(
-            email: 'user@example.com',
-            password: 'wrong-password',
-          ),
-        ).called(1);
-        expect(observer.replaceCount, 0);
-        expect(find.byType(BottomNavigationBarScreen), findsNothing);
-      },
-    );
+      expect(sut.errorMessage, 'Login failed');
+      SnackBarAssertions.expectSnackBar(
+        tester: tester,
+        message: 'Login failed',
+      );
+      verify(
+        authRepository.loginWithEmail(
+          email: 'user@example.com',
+          password: 'wrong-password',
+        ),
+      ).called(1);
+      expect(observer.replaceCount, 0);
+      expect(find.byType(BottomNavigationBarScreen), findsNothing);
+    });
 
     testWidgets(
       'login maps invalid credentials code to user-friendly message',
@@ -112,7 +122,10 @@ void main() {
         );
         final observer = TestNavigatorObserver();
         final buildContext =
-            await BuildContextProvider.getWithObserver(tester, observer);
+            await BuildContextProvider.getWithObserverAndScaffold(
+              tester,
+              observer,
+            );
         final navigator = Navigator.of(buildContext);
         final scaffoldMessenger = ScaffoldMessenger.of(buildContext);
 
@@ -122,92 +135,96 @@ void main() {
           navigator,
           scaffoldMessenger,
         );
-        await tester.pumpAndSettle();
+        await tester.pump();
 
         expect(sut.errorMessage, 'Invalid login or password.');
+        SnackBarAssertions.expectSnackBar(
+          tester: tester,
+          message: 'Invalid login or password.',
+        );
         expect(observer.replaceCount, 0);
         expect(find.byType(BottomNavigationBarScreen), findsNothing);
       },
     );
 
-    testWidgets(
-      'login shows snackbar when error exists',
-      (WidgetTester tester) async {
-        when(
-          authRepository.loginWithEmail(
-            email: 'user@example.com',
-            password: 'wrong-password',
-          ),
-        ).thenAnswer((_) async => const ApiError<void>('Login failed'));
+    testWidgets('login shows snackbar when error exists', (
+      WidgetTester tester,
+    ) async {
+      when(
+        authRepository.loginWithEmail(
+          email: 'user@example.com',
+          password: 'wrong-password',
+        ),
+      ).thenAnswer((_) async => const ApiError<void>('Login failed'));
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: Builder(
-                builder: (context) {
-                  return TextButton(
-                    onPressed: () async {
-                      await sut.login(
-                        'user@example.com',
-                        'wrong-password',
-                        Navigator.of(context),
-                        ScaffoldMessenger.of(context),
-                      );
-                    },
-                    child: const Text('Login'),
-                  );
-                },
-              ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return TextButton(
+                  onPressed: () async {
+                    await sut.login(
+                      'user@example.com',
+                      'wrong-password',
+                      Navigator.of(context),
+                      ScaffoldMessenger.of(context),
+                    );
+                  },
+                  child: const Text('Login'),
+                );
+              },
             ),
           ),
-        );
+        ),
+      );
 
-        await tester.tap(find.text('Login'));
-        await tester.pump();
+      await tester.tap(find.text('Login'));
+      await tester.pump();
 
-        expect(find.text('Login failed'), findsOneWidget);
-        final snackBar = tester.widget<SnackBar>(find.byType(SnackBar));
-        expect(snackBar.backgroundColor, Colors.red);
-      },
-    );
+      SnackBarAssertions.expectSnackBar(
+        tester: tester,
+        message: 'Login failed',
+        backgroundColor: Colors.red,
+      );
+    });
 
-    testWidgets(
-      'login does not show snackbar when error is null',
-      (WidgetTester tester) async {
-        when(
-          authRepository.loginWithEmail(
-            email: 'user@example.com',
-            password: 'strong-password',
-          ),
-        ).thenAnswer((_) async => ApiSuccess<void>(null));
+    testWidgets('login does not show snackbar when error is null', (
+      WidgetTester tester,
+    ) async {
+      when(
+        authRepository.loginWithEmail(
+          email: 'user@example.com',
+          password: 'strong-password',
+        ),
+      ).thenAnswer((_) async => ApiSuccess<void>(null));
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: Builder(
-                builder: (context) {
-                  return TextButton(
-                    onPressed: () async {
-                      await sut.login(
-                        'user@example.com',
-                        'strong-password',
-                        Navigator.of(context),
-                        ScaffoldMessenger.of(context),
-                      );
-                    },
-                    child: const Text('Login'),
-                  );
-                },
-              ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return TextButton(
+                  onPressed: () async {
+                    await sut.login(
+                      'user@example.com',
+                      'strong-password',
+                      Navigator.of(context),
+                      ScaffoldMessenger.of(context),
+                    );
+                  },
+                  child: const Text('Login'),
+                );
+              },
             ),
           ),
-        );
+        ),
+      );
 
-        await tester.tap(find.text('Login'));
-        await tester.pumpAndSettle();
+      await tester.tap(find.text('Login'));
+      await tester.pumpAndSettle();
 
-        expect(find.byType(SnackBar), findsNothing);
-      },
-    );
+      SnackBarAssertions.expectSnackBarIsNotVisible();
+    });
   });
 }
