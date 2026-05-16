@@ -75,10 +75,11 @@ void main() {
         ),
       ).thenAnswer((_) async => const ApiError<void>('Login failed'));
       final observer = TestNavigatorObserver();
-      final buildContext = await BuildContextProvider.getWithObserverAndScaffold(
-        tester,
-        observer,
-      );
+      final buildContext =
+          await BuildContextProvider.getWithObserverAndScaffold(
+            tester,
+            observer,
+          );
       final navigator = Navigator.of(buildContext);
       final scaffoldMessenger = ScaffoldMessenger.of(buildContext);
 
@@ -146,84 +147,5 @@ void main() {
         expect(find.byType(BottomNavigationBarScreen), findsNothing);
       },
     );
-
-    testWidgets('login shows snackbar when error exists', (
-      WidgetTester tester,
-    ) async {
-      when(
-        authRepository.loginWithEmail(
-          email: 'user@example.com',
-          password: 'wrong-password',
-        ),
-      ).thenAnswer((_) async => const ApiError<void>('Login failed'));
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (context) {
-                return TextButton(
-                  onPressed: () async {
-                    await sut.login(
-                      'user@example.com',
-                      'wrong-password',
-                      Navigator.of(context),
-                      ScaffoldMessenger.of(context),
-                    );
-                  },
-                  child: const Text('Login'),
-                );
-              },
-            ),
-          ),
-        ),
-      );
-
-      await tester.tap(find.text('Login'));
-      await tester.pump();
-
-      SnackBarAssertions.expectSnackBar(
-        tester: tester,
-        message: 'Login failed',
-      );
-    });
-
-    testWidgets('login does not show snackbar when error is null', (
-      WidgetTester tester,
-    ) async {
-      when(
-        authRepository.loginWithEmail(
-          email: 'user@example.com',
-          password: 'strong-password',
-        ),
-      ).thenAnswer((_) async => ApiSuccess<void>(null));
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (context) {
-                return TextButton(
-                  onPressed: () async {
-                    await sut.login(
-                      'user@example.com',
-                      'strong-password',
-                      Navigator.of(context),
-                      ScaffoldMessenger.of(context),
-                    );
-                  },
-                  child: const Text('Login'),
-                );
-              },
-            ),
-          ),
-        ),
-      );
-
-      await tester.tap(find.text('Login'));
-      await tester.pumpAndSettle();
-
-      SnackBarAssertions.expectSnackBarIsNotVisible();
-    });
   });
 }
