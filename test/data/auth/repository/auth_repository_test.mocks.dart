@@ -106,6 +106,19 @@ class MockAuthApi extends _i1.Mock implements _i4.AuthApi {
             ),
           )
           as _i5.Future<_i6.ApiResult<_i7.AuthTokensReponse>>);
+
+  @override
+  _i5.Future<_i6.ApiResult<void>> logout({required String? refreshToken}) =>
+      (super.noSuchMethod(
+            Invocation.method(#logout, [], {#refreshToken: refreshToken}),
+            returnValue: _i5.Future<_i6.ApiResult<void>>.value(
+              _i8.dummyValue<_i6.ApiResult<void>>(
+                this,
+                Invocation.method(#logout, [], {#refreshToken: refreshToken}),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.ApiResult<void>>);
 }
 
 /// A class which mocks [AbstractDeviceIdRepository].
@@ -138,9 +151,26 @@ class MockAbstractAuthTokensDatabase extends _i1.Mock
   }
 
   @override
+  _i5.Future<_i3.AuthTokensEntity?> loadTokens() =>
+      (super.noSuchMethod(
+            Invocation.method(#loadTokens, []),
+            returnValue: _i5.Future<_i3.AuthTokensEntity?>.value(),
+          )
+          as _i5.Future<_i3.AuthTokensEntity?>);
+
+  @override
   _i5.Future<void> saveTokens(_i3.AuthTokensEntity? entity) =>
       (super.noSuchMethod(
             Invocation.method(#saveTokens, [entity]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> deleteTokens() =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteTokens, []),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )

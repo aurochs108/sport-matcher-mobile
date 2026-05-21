@@ -13,7 +13,24 @@ class AuthTokensDatabase implements AbstractAuthTokensDatabase {
       : _storage = storage ?? const FlutterSecureStorage();
 
   @override
+  Future<AuthTokensEntity?> loadTokens() async {
+    final value = await _storage.read(key: _tokenKey);
+    if (value == null) {
+      return null;
+    }
+
+    return AuthTokensEntity.fromJson(
+      jsonDecode(value) as Map<String, dynamic>,
+    );
+  }
+
+  @override
   Future<void> saveTokens(AuthTokensEntity entity) async {
     await _storage.write(key: _tokenKey, value: jsonEncode(entity));
+  }
+
+  @override
+  Future<void> deleteTokens() async {
+    await _storage.delete(key: _tokenKey);
   }
 }

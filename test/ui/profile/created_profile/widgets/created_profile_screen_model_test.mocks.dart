@@ -6,6 +6,9 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i7;
+import 'package:sport_matcher/data/auth/repository/auth_repository.dart' as _i5;
+import 'package:sport_matcher/data/core/api_request/api_result.dart' as _i6;
 import 'package:sport_matcher/data/profile/domain/profile_domain.dart' as _i4;
 import 'package:sport_matcher/data/profile/repository/abstract_profiles_repository.dart'
     as _i2;
@@ -50,4 +53,70 @@ class MockAbstractProfilesRepository extends _i1.Mock
             returnValue: _i3.Future<_i4.ProfileDomain?>.value(),
           )
           as _i3.Future<_i4.ProfileDomain?>);
+}
+
+/// A class which mocks [AuthRepository].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockAuthRepository extends _i1.Mock implements _i5.AuthRepository {
+  MockAuthRepository() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Future<_i6.ApiResult<void>> loginWithEmail({
+    required String? email,
+    required String? password,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#loginWithEmail, [], {
+              #email: email,
+              #password: password,
+            }),
+            returnValue: _i3.Future<_i6.ApiResult<void>>.value(
+              _i7.dummyValue<_i6.ApiResult<void>>(
+                this,
+                Invocation.method(#loginWithEmail, [], {
+                  #email: email,
+                  #password: password,
+                }),
+              ),
+            ),
+          )
+          as _i3.Future<_i6.ApiResult<void>>);
+
+  @override
+  _i3.Future<_i6.ApiResult<void>> registerWithEmail({
+    required String? email,
+    required String? password,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#registerWithEmail, [], {
+              #email: email,
+              #password: password,
+            }),
+            returnValue: _i3.Future<_i6.ApiResult<void>>.value(
+              _i7.dummyValue<_i6.ApiResult<void>>(
+                this,
+                Invocation.method(#registerWithEmail, [], {
+                  #email: email,
+                  #password: password,
+                }),
+              ),
+            ),
+          )
+          as _i3.Future<_i6.ApiResult<void>>);
+
+  @override
+  _i3.Future<_i6.ApiResult<void>> logout() =>
+      (super.noSuchMethod(
+            Invocation.method(#logout, []),
+            returnValue: _i3.Future<_i6.ApiResult<void>>.value(
+              _i7.dummyValue<_i6.ApiResult<void>>(
+                this,
+                Invocation.method(#logout, []),
+              ),
+            ),
+          )
+          as _i3.Future<_i6.ApiResult<void>>);
 }

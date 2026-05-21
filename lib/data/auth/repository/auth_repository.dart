@@ -76,6 +76,27 @@ class AuthRepository {
     }
   }
 
+  Future<ApiResult<void>> logout() async {
+    try {
+      final tokens = await _tokenDatabase.loadTokens();
+      if (tokens == null) {
+        return ApiSuccess<void>(null);
+      }
+
+      final result = await _authApi.logout(refreshToken: tokens.refreshToken);
+
+      switch (result) {
+        case ApiSuccess():
+          await _tokenDatabase.deleteTokens();
+          return ApiSuccess<void>(null);
+        case ApiError():
+          return _mapError(result);
+      }
+    } catch (error) {
+      return ApiError<void>(_errorMapper.map(error));
+    }
+  }
+
   ApiError<void> _mapError<T>(ApiError<T> error) {
     return ApiError<void>(
       error.message,

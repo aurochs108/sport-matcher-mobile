@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sport_matcher/data/profile/domain/profile_domain.dart';
 import 'package:sport_matcher/ui/core/theme/app_theme.dart';
+import 'package:sport_matcher/ui/core/ui/buttons/async_rounded_button/async_rounded_button.dart';
 import 'package:sport_matcher/ui/core/ui/buttons/rounded_button/rounded_button.dart';
 import 'package:sport_matcher/ui/profile/widgets/profile_fields_view.dart';
 import 'created_profile_screen_model.dart';
@@ -65,6 +66,14 @@ class _CreatedProfileScreenState extends State<CreatedProfileScreen> {
                     onPressed: _viewModel.getEditButtonAction(
                       profile,
                       Navigator.of(context),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  AsyncRoundedButton(
+                    buttonTitle: "Logout",
+                    onPressed: () => _viewModel.logout(
+                      Navigator.of(context),
+                      ScaffoldMessenger.of(context),
                     ),
                   ),
                 ],

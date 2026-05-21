@@ -76,4 +76,17 @@ class MockAuthRepository extends _i1.Mock implements _i2.AuthRepository {
             ),
           )
           as _i3.Future<_i4.ApiResult<void>>);
+
+  @override
+  _i3.Future<_i4.ApiResult<void>> logout() =>
+      (super.noSuchMethod(
+            Invocation.method(#logout, []),
+            returnValue: _i3.Future<_i4.ApiResult<void>>.value(
+              _i5.dummyValue<_i4.ApiResult<void>>(
+                this,
+                Invocation.method(#logout, []),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.ApiResult<void>>);
 }

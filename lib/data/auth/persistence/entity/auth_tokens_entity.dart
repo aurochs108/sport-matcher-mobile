@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'auth_tokens_entity.g.dart';
 
-@JsonSerializable(createFactory: false)
+@JsonSerializable()
 class AuthTokensEntity {
   final String accessToken;
   final String refreshToken;
@@ -15,6 +15,9 @@ class AuthTokensEntity {
     required this.tokenType,
     required this.expiresIn,
   });
+
+  factory AuthTokensEntity.fromJson(Map<String, dynamic> json) =>
+      _$AuthTokensEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$AuthTokensEntityToJson(this);
 }

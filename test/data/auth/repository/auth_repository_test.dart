@@ -27,6 +27,7 @@ void main() {
   provideDummy<ApiResult<AuthTokensReponse>>(
     const ApiError<AuthTokensReponse>('dummy error'),
   );
+  provideDummy<ApiResult<void>>(const ApiSuccess<void>(null));
 
   group('AuthRepository', () {
     late MockAuthApi authApi;
@@ -370,5 +371,79 @@ void main() {
         verify(errorMapper.map(same(exception))).called(1);
       },
     );
+
+    test('logout returns success when there are no stored tokens', () async {
+      when(tokenDatabase.loadTokens()).thenAnswer((_) async => null);
+
+      final result = await sut.logout();
+
+      expect(result, isA<ApiSuccess<void>>());
+      verify(tokenDatabase.loadTokens()).called(1);
+      verifyZeroInteractions(authApi);
+      verifyNever(tokenDatabase.deleteTokens());
+      verifyZeroInteractions(errorMapper);
+    });
+
+    test('logout revokes refresh token and deletes stored tokens', () async {
+      final tokens = AuthTokensEntityRandom.random();
+      when(tokenDatabase.loadTokens()).thenAnswer((_) async => tokens);
+      when(
+        authApi.logout(refreshToken: tokens.refreshToken),
+      ).thenAnswer((_) async => const ApiSuccess<void>(null));
+      when(tokenDatabase.deleteTokens()).thenAnswer((_) async {});
+
+      final result = await sut.logout();
+
+      expect(result, isA<ApiSuccess<void>>());
+      verify(tokenDatabase.loadTokens()).called(1);
+      verify(authApi.logout(refreshToken: tokens.refreshToken)).called(1);
+      verify(tokenDatabase.deleteTokens()).called(1);
+      verifyZeroInteractions(errorMapper);
+    });
+
+    test('logout returns API error without deleting tokens', () async {
+      final tokens = AuthTokensEntityRandom.random();
+      const errorMessage = 'Logout failed';
+      const statusCode = 500;
+      const errorCode = 'LOGOUT_FAILED';
+      when(tokenDatabase.loadTokens()).thenAnswer((_) async => tokens);
+      when(
+        authApi.logout(refreshToken: tokens.refreshToken),
+      ).thenAnswer(
+        (_) async => const ApiError<void>(
+          errorMessage,
+          statusCode: statusCode,
+          code: errorCode,
+        ),
+      );
+
+      final result = await sut.logout();
+
+      expect(result, isA<ApiError<void>>());
+      expect((result as ApiError<void>).message, errorMessage);
+      expect(result.statusCode, statusCode);
+      expect(result.code, errorCode);
+      verify(tokenDatabase.loadTokens()).called(1);
+      verify(authApi.logout(refreshToken: tokens.refreshToken)).called(1);
+      verifyNever(tokenDatabase.deleteTokens());
+      verifyZeroInteractions(errorMapper);
+    });
+
+    test('logout maps token storage errors to ApiError', () async {
+      final exception = Exception('read failed');
+      const mappedErrorMessage = 'mapped error';
+      when(
+        tokenDatabase.loadTokens(),
+      ).thenAnswer((_) => Future.error(exception));
+      when(errorMapper.map(exception)).thenReturn(mappedErrorMessage);
+
+      final result = await sut.logout();
+
+      expect(result, isA<ApiError<void>>());
+      expect((result as ApiError<void>).message, mappedErrorMessage);
+      verify(errorMapper.map(same(exception))).called(1);
+      verifyZeroInteractions(authApi);
+      verifyNever(tokenDatabase.deleteTokens());
+    });
   });
 }

@@ -55,6 +55,26 @@ void main() {
       );
     }
 
+    test('execute returns success for empty response without parser', () async {
+      late http.Request capturedRequest;
+      final client = MockClient((request) async {
+        capturedRequest = request;
+        return http.Response('', 204);
+      });
+      final sut = ApiRequest<void>(
+        path: '/auth/logout',
+        method: HttpMethod.post,
+        body: {'refreshToken': 'refresh-token'},
+        client: client,
+      );
+
+      final result = await sut.execute();
+
+      expect(capturedRequest.method, 'POST');
+      expect(capturedRequest.body, jsonEncode({'refreshToken': 'refresh-token'}));
+      expect(result, isA<ApiSuccess<void>>());
+    });
+
     test(
       'execute returns mapped error with status code when success body cannot be parsed',
       () async {
