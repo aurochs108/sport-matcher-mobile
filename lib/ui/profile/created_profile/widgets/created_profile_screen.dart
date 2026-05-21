@@ -68,7 +68,7 @@ class _CreatedProfileScreenState extends State<CreatedProfileScreen> {
                       Navigator.of(context),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppTheme.columnSpacingSmall),
                   AsyncRoundedButton(
                     buttonTitle: "Logout",
                     onPressed: () => _viewModel.logout(
