@@ -10,7 +10,7 @@ import 'package:mockito/src/dummies.dart' as _i7;
 import 'package:sport_matcher/data/auth/repository/auth_repository.dart' as _i5;
 import 'package:sport_matcher/data/core/api_request/api_result.dart' as _i6;
 import 'package:sport_matcher/data/profile/domain/profile_domain.dart' as _i4;
-import 'package:sport_matcher/data/profile/repository/abstract_profiles_repository.dart'
+import 'package:sport_matcher/data/profile/repository/profiles_repository.dart'
     as _i2;
 
 // ignore_for_file: type=lint
@@ -28,12 +28,12 @@ import 'package:sport_matcher/data/profile/repository/abstract_profiles_reposito
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-/// A class which mocks [AbstractProfilesRepository].
+/// A class which mocks [ProfilesRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAbstractProfilesRepository extends _i1.Mock
-    implements _i2.AbstractProfilesRepository {
-  MockAbstractProfilesRepository() {
+class MockProfilesRepository extends _i1.Mock
+    implements _i2.ProfilesRepository {
+  MockProfilesRepository() {
     _i1.throwOnMissingStub(this);
   }
 

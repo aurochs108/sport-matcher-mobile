@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sport_matcher/data/profile/config/activities_config.dart';
-import 'package:sport_matcher/data/profile/domain/profile_domain.dart';
-import 'package:sport_matcher/data/profile/repository/abstract_profiles_repository.dart';
-import 'package:sport_matcher/data/profile/repository/profiles_repository.dart';
 import 'package:sport_matcher/data/profile/config/profile_config.dart';
+import 'package:sport_matcher/data/profile/domain/profile_domain.dart';
+import 'package:sport_matcher/data/profile/repository/profiles_repository.dart';
 import 'package:sport_matcher/ui/core/utilities/validators/abstract_text_validator.dart';
 import 'package:sport_matcher/ui/core/utilities/validators/text_length_validator.dart';
 
@@ -18,7 +17,7 @@ class ProfileFormFieldsViewModel {
   final Map<ActivitiesConfig, bool> _activities = {
     for (final activity in ActivitiesConfig.values) activity: false,
   };
-  final AbstractProfilesRepository _profileRepository;
+  final ProfilesRepository _profileRepository;
   Function()? onStateChanged;
 
   ProfileFormFieldsViewModel({
@@ -26,16 +25,17 @@ class ProfileFormFieldsViewModel {
     VoidCallback? onSaved,
     AbstractTextValidator? nameValidator,
     ProfileDomain? initialProfile,
-    AbstractProfilesRepository? profileRepository,
+    ProfilesRepository? profileRepository,
     ImagePicker? imagePicker,
-  })  : _onSaved = onSaved,
-        nameValidator = nameValidator ??
-            TextLengthValidator(
-              minimumLength: ProfileConfig.nameMinLength,
-              maximumLength: ProfileConfig.nameMaxLength,
-            ),
-        _profileRepository = profileRepository ?? ProfilesRepository(),
-        _picker = imagePicker ?? ImagePicker() {
+  }) : _onSaved = onSaved,
+       nameValidator =
+           nameValidator ??
+           TextLengthValidator(
+             minimumLength: ProfileConfig.nameMinLength,
+             maximumLength: ProfileConfig.nameMaxLength,
+           ),
+       _profileRepository = profileRepository ?? ProfilesRepository(),
+       _picker = imagePicker ?? ImagePicker() {
     nameTextController.addListener(_onStateChanged);
     if (initialProfile != null) {
       _loadFromProfile(initialProfile);

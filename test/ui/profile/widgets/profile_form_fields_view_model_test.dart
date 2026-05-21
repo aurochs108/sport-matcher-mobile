@@ -5,7 +5,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:sport_matcher/data/profile/config/activities_config.dart';
 import 'package:sport_matcher/data/profile/domain/profile_domain.dart';
-import 'package:sport_matcher/data/profile/repository/abstract_profiles_repository.dart';
+import 'package:sport_matcher/data/profile/repository/profiles_repository.dart';
 import 'package:sport_matcher/ui/core/utilities/validators/abstract_text_validator.dart';
 import 'package:sport_matcher/ui/profile/widgets/profile_form_fields_view_model.dart';
 import 'package:uuid/uuid.dart';
@@ -13,12 +13,12 @@ import 'package:uuid/uuid.dart';
 import '../../../mocks/mock_image_picker.dart';
 import 'profile_form_fields_view_model_test.mocks.dart';
 
-@GenerateMocks([AbstractTextValidator, AbstractProfilesRepository])
+@GenerateMocks([AbstractTextValidator, ProfilesRepository])
 void main() {
   group('ProfileFormFieldsViewModel', () {
     late MockImagePicker imagePicker;
     late MockAbstractTextValidator nameValidator;
-    late MockAbstractProfilesRepository profileRepository;
+    late MockProfilesRepository profileRepository;
     late int onStateChangedCallCount;
     final buttonTitle = Uuid().v4();
     late ProfileFormFieldsViewModel sut;
@@ -27,7 +27,7 @@ void main() {
       onStateChangedCallCount = 0;
       nameValidator = MockAbstractTextValidator();
       when(nameValidator.validate(any)).thenReturn(null);
-      profileRepository = MockAbstractProfilesRepository();
+      profileRepository = MockProfilesRepository();
       imagePicker = MockImagePicker();
       sut = ProfileFormFieldsViewModel(
         buttonTitle: buttonTitle,
@@ -94,10 +94,13 @@ void main() {
       sut.dispose();
 
       // then
-      expect(() => sut.nameTextController.text = Uuid().v4(), throwsFlutterError);
+      expect(
+        () => sut.nameTextController.text = Uuid().v4(),
+        throwsFlutterError,
+      );
     });
 
-     // MARK: - pickImage
+    // MARK: - pickImage
 
     test('should update picked image path on successful image pick', () async {
       // given

@@ -2,24 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:sport_matcher/data/auth/repository/auth_repository.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
 import 'package:sport_matcher/data/profile/domain/profile_domain.dart';
-import 'package:sport_matcher/data/profile/repository/abstract_profiles_repository.dart';
 import 'package:sport_matcher/data/profile/repository/profiles_repository.dart';
 import 'package:sport_matcher/ui/authentication/welcome/widgets/welcome_screen.dart';
 import 'package:sport_matcher/ui/profile/edit_profile/widgets/edit_profile_screen.dart';
 
 class CreatedProfileScreenModel extends ChangeNotifier {
-  final AbstractProfilesRepository _profilesRepository;
+  final ProfilesRepository _profilesRepository;
   final AuthRepository _authRepository;
   late Future<ProfileDomain?> profileFuture;
   Function()? onStateChanged;
   String? errorMessage;
 
   CreatedProfileScreenModel({
-    AbstractProfilesRepository? profilesRepository,
+    ProfilesRepository? profilesRepository,
     AuthRepository? authRepository,
-  })
-    : _profilesRepository = profilesRepository ?? ProfilesRepository(),
-      _authRepository = authRepository ?? AuthRepository() {
+  }) : _profilesRepository = profilesRepository ?? ProfilesRepository(),
+       _authRepository = authRepository ?? AuthRepository() {
     profileFuture = _loadProfile();
   }
 
@@ -89,10 +87,7 @@ class CreatedProfileScreenModel extends ChangeNotifier {
     }
 
     scaffoldMessenger.showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 }

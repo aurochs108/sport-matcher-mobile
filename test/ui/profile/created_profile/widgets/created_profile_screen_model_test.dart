@@ -4,7 +4,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:sport_matcher/data/auth/repository/auth_repository.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
-import 'package:sport_matcher/data/profile/repository/abstract_profiles_repository.dart';
+import 'package:sport_matcher/data/profile/repository/profiles_repository.dart';
 import 'package:sport_matcher/ui/authentication/welcome/widgets/welcome_screen.dart';
 import 'package:sport_matcher/ui/profile/created_profile/widgets/created_profile_screen_model.dart';
 import 'package:sport_matcher/ui/profile/edit_profile/widgets/edit_profile_screen.dart';
@@ -14,17 +14,17 @@ import '../../../../random/profile_domain_random.dart';
 import '../../../../utilities/build_context_provider.dart';
 import 'created_profile_screen_model_test.mocks.dart';
 
-@GenerateMocks([AbstractProfilesRepository, AuthRepository])
+@GenerateMocks([ProfilesRepository, AuthRepository])
 void main() {
   provideDummy<ApiResult<void>>(const ApiSuccess<void>(null));
 
   group('CreatedProfileScreenModel', () {
-    late MockAbstractProfilesRepository mockProfilesRepository;
+    late MockProfilesRepository mockProfilesRepository;
     late MockAuthRepository mockAuthRepository;
     late CreatedProfileScreenModel sut;
 
     setUp(() {
-      mockProfilesRepository = MockAbstractProfilesRepository();
+      mockProfilesRepository = MockProfilesRepository();
       mockAuthRepository = MockAuthRepository();
       when(mockProfilesRepository.loadProfile()).thenAnswer((_) async => null);
       sut = CreatedProfileScreenModel(
