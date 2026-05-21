@@ -15,7 +15,11 @@ class AuthApi {
       path: '/auth/login/email',
       method: HttpMethod.post,
       responseParser: AuthTokensReponse.fromJson,
-      body: {'email': email, 'password': password, 'deviceId': deviceId},
+      body: {
+        'email': email,
+        'password': password,
+        'deviceId': deviceId,
+      },
     ).execute();
   }
 
