@@ -12,7 +12,7 @@ import 'package:sport_matcher/data/auth/mapper/auth_tokens_mapper.dart' as _i11;
 import 'package:sport_matcher/data/auth/network/api/auth_api.dart' as _i4;
 import 'package:sport_matcher/data/auth/network/response/auth_tokens_reponse.dart'
     as _i7;
-import 'package:sport_matcher/data/auth/persistence/database/abstract_auth_tokens_database.dart'
+import 'package:sport_matcher/data/auth/persistence/database/auth_tokens_database.dart'
     as _i10;
 import 'package:sport_matcher/data/auth/persistence/entity/auth_tokens_entity.dart'
     as _i3;
@@ -141,12 +141,12 @@ class MockAbstractDeviceIdRepository extends _i1.Mock
           as _i5.Future<String>);
 }
 
-/// A class which mocks [AbstractAuthTokensDatabase].
+/// A class which mocks [AuthTokensDatabase].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAbstractAuthTokensDatabase extends _i1.Mock
-    implements _i10.AbstractAuthTokensDatabase {
-  MockAbstractAuthTokensDatabase() {
+class MockAuthTokensDatabase extends _i1.Mock
+    implements _i10.AuthTokensDatabase {
+  MockAuthTokensDatabase() {
     _i1.throwOnMissingStub(this);
   }
 
