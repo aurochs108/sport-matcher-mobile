@@ -425,5 +425,76 @@ void main() {
       verifyZeroInteractions(authApi);
       verifyNever(tokenDatabase.deleteTokens());
     });
+
+    test('refreshTokens refreshes and saves new tokens', () async {
+      final storedTokens = AuthTokensEntityRandom.random();
+      final response = AuthTokensResponseRandom.random();
+      final mappedTokens = AuthTokensDomainRandom.random();
+      final mappedEntity = AuthTokensEntityRandom.random();
+      when(tokenDatabase.loadTokens()).thenAnswer((_) async => storedTokens);
+      when(
+        authApi.refreshTokens(refreshToken: storedTokens.refreshToken),
+      ).thenAnswer((_) async => ApiSuccess(response));
+      when(mapper.responseToDomain(response)).thenReturn(mappedTokens);
+      when(mapper.domainToEntity(mappedTokens)).thenReturn(mappedEntity);
+      when(tokenDatabase.saveTokens(mappedEntity)).thenAnswer((_) async {});
+
+      final result = await sut.refreshTokens();
+
+      expect(result, isA<ApiSuccess<void>>());
+      verify(tokenDatabase.loadTokens()).called(1);
+      verify(
+        authApi.refreshTokens(refreshToken: storedTokens.refreshToken),
+      ).called(1);
+      verify(tokenDatabase.saveTokens(mappedEntity)).called(1);
+    });
+
+    test('refreshTokens returns error when there are no stored tokens', () async {
+      when(tokenDatabase.loadTokens()).thenAnswer((_) async => null);
+
+      final result = await sut.refreshTokens();
+
+      expect(result, isA<ApiError<void>>());
+      expect((result as ApiError<void>).message, 'No refresh token found.');
+      verify(tokenDatabase.loadTokens()).called(1);
+      verifyZeroInteractions(authApi);
+      verifyNever(tokenDatabase.saveTokens(any));
+    });
+
+    test('refreshTokens returns API error without saving tokens', () async {
+      final storedTokens = AuthTokensEntityRandom.random();
+      const errorMessage = 'Refresh failed';
+      const statusCode = 401;
+      const errorCode = 'REFRESH_TOKEN_EXPIRED';
+      when(tokenDatabase.loadTokens()).thenAnswer((_) async => storedTokens);
+      when(authApi.refreshTokens(refreshToken: storedTokens.refreshToken))
+          .thenAnswer(
+        (_) async => const ApiError<AuthTokensReponse>(
+          errorMessage,
+          statusCode: statusCode,
+          code: errorCode,
+        ),
+      );
+
+      final result = await sut.refreshTokens();
+
+      expect(result, isA<ApiError<void>>());
+      expect((result as ApiError<void>).message, errorMessage);
+      expect(result.statusCode, statusCode);
+      expect(result.code, errorCode);
+      verify(
+        authApi.refreshTokens(refreshToken: storedTokens.refreshToken),
+      ).called(1);
+      verifyNever(tokenDatabase.saveTokens(any));
+    });
+
+    test('clearStoredTokens deletes stored tokens', () async {
+      when(tokenDatabase.deleteTokens()).thenAnswer((_) async {});
+
+      final result = await sut.clearStoredTokens();
+
+      expect(result, isA<ApiSuccess<void>>());
+      verify(tokenDatabase.deleteTokens()).called(1);
+    });
   });
 }

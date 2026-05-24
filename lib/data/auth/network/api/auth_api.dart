@@ -1,6 +1,7 @@
 import 'package:sport_matcher/data/auth/network/request/email_login_request.dart';
 import 'package:sport_matcher/data/auth/network/request/email_registration_request.dart';
 import 'package:sport_matcher/data/auth/network/request/logout_request.dart';
+import 'package:sport_matcher/data/auth/network/request/refresh_tokens_request.dart';
 import 'package:sport_matcher/data/auth/network/response/auth_tokens_reponse.dart';
 import 'package:sport_matcher/data/core/api_request/api_request.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
@@ -48,6 +49,18 @@ class AuthApi {
     return ApiRequest<void>(
       path: '/auth/logout',
       method: HttpMethod.post,
+      body: request.toJson(),
+    ).execute();
+  }
+
+  Future<ApiResult<AuthTokensReponse>> refreshTokens({
+    required String refreshToken,
+  }) {
+    final request = RefreshTokensRequest(refreshToken: refreshToken);
+    return ApiRequest<AuthTokensReponse>(
+      path: '/auth/refresh',
+      method: HttpMethod.post,
+      responseParser: AuthTokensReponse.fromJson,
       body: request.toJson(),
     ).execute();
   }

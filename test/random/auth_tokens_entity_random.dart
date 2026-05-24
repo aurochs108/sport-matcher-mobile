@@ -12,6 +12,8 @@ class AuthTokensEntityRandom {
       refreshToken: const Uuid().v4(),
       tokenType: _randomTokenType(random),
       expiresIn: random.nextInt(86400) + 1,
+      accessTokenExpiresAtMillisecondsSinceEpoch:
+          DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch,
     );
   }
 

@@ -51,6 +51,10 @@ void main() {
       expect(result?.refreshToken, entity.refreshToken);
       expect(result?.tokenType, entity.tokenType);
       expect(result?.expiresIn, entity.expiresIn);
+      expect(
+        result?.accessTokenExpiresAtMillisecondsSinceEpoch,
+        entity.accessTokenExpiresAtMillisecondsSinceEpoch,
+      );
       verify(storage.read(key: 'auth_tokens')).called(1);
     });
 
