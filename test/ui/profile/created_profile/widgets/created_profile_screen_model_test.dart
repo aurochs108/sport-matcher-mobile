@@ -47,6 +47,7 @@ void main() {
       // when
       final sut = CreatedProfileScreenModel(
         profilesRepository: mockProfilesRepository,
+        authRepository: mockAuthRepository,
       );
       final profile = await sut.profileFuture;
 
