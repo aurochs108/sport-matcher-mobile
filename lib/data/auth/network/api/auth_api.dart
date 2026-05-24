@@ -1,4 +1,6 @@
+import 'package:sport_matcher/data/auth/network/request/email_login_request.dart';
 import 'package:sport_matcher/data/auth/network/request/email_registration_request.dart';
+import 'package:sport_matcher/data/auth/network/request/logout_request.dart';
 import 'package:sport_matcher/data/auth/network/response/auth_tokens_reponse.dart';
 import 'package:sport_matcher/data/core/api_request/api_request.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
@@ -10,15 +12,16 @@ class AuthApi {
     required String password,
     required String deviceId,
   }) {
+    final request = EmailLoginRequest(
+      email: email,
+      password: password,
+      deviceId: deviceId,
+    );
     return ApiRequest<AuthTokensReponse>(
       path: '/auth/login/email',
       method: HttpMethod.post,
       responseParser: AuthTokensReponse.fromJson,
-      body: {
-        'email': email,
-        'password': password,
-        'deviceId': deviceId,
-      },
+      body: request.toJson(),
     ).execute();
   }
 
@@ -36,6 +39,15 @@ class AuthApi {
       path: '/auth/register/email',
       method: HttpMethod.post,
       responseParser: AuthTokensReponse.fromJson,
+      body: request.toJson(),
+    ).execute();
+  }
+
+  Future<ApiResult<void>> logout({required String refreshToken}) {
+    final request = LogoutRequest(refreshToken: refreshToken);
+    return ApiRequest<void>(
+      path: '/auth/logout',
+      method: HttpMethod.post,
       body: request.toJson(),
     ).execute();
   }

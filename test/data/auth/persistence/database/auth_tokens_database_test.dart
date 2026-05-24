@@ -40,6 +40,29 @@ void main() {
       ).called(1);
     });
 
+    test('loadTokens returns entity when storage has token json', () async {
+      final entity = AuthTokensEntityRandom.random();
+      final storedJson = jsonEncode(entity);
+      when(storage.read(key: 'auth_tokens')).thenAnswer((_) async => storedJson);
+
+      final result = await sut.loadTokens();
+
+      expect(result?.accessToken, entity.accessToken);
+      expect(result?.refreshToken, entity.refreshToken);
+      expect(result?.tokenType, entity.tokenType);
+      expect(result?.expiresIn, entity.expiresIn);
+      verify(storage.read(key: 'auth_tokens')).called(1);
+    });
+
+    test('loadTokens returns null when storage has no tokens', () async {
+      when(storage.read(key: 'auth_tokens')).thenAnswer((_) async => null);
+
+      final result = await sut.loadTokens();
+
+      expect(result, isNull);
+      verify(storage.read(key: 'auth_tokens')).called(1);
+    });
+
     test('saveTokens propagates storage errors', () async {
       final entity = AuthTokensEntityRandom.random();
       final expectedJson = jsonEncode(entity);
@@ -55,6 +78,14 @@ void main() {
         sut.saveTokens(entity),
         throwsA(same(exception)),
       );
+    });
+
+    test('deleteTokens deletes auth_tokens key', () async {
+      when(storage.delete(key: 'auth_tokens')).thenAnswer((_) async {});
+
+      await sut.deleteTokens();
+
+      verify(storage.delete(key: 'auth_tokens')).called(1);
     });
   });
 }

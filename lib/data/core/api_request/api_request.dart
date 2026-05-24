@@ -16,7 +16,7 @@ class ApiRequest<T> {
   final String path;
   final HttpMethod method;
   final Map<String, dynamic>? body;
-  final T Function(Map<String, dynamic>) responseParser;
+  final T Function(Map<String, dynamic>)? responseParser;
   final Duration timeout;
   final http.Client _client;
   final ApiErrorToUserMessageMapper _errorMapper;
@@ -24,7 +24,7 @@ class ApiRequest<T> {
   ApiRequest({
     required this.path,
     required this.method,
-    required this.responseParser,
+    this.responseParser,
     this.body,
     this.timeout = const Duration(seconds: 30),
     http.Client? client,
@@ -65,7 +65,11 @@ class ApiRequest<T> {
 
   ApiResult<T> _parseSuccess(http.Response response) {
     try {
-      return ApiSuccess(responseParser(jsonDecode(response.body)));
+      final parser = responseParser;
+      if (parser == null) {
+        return ApiSuccess(null as T);
+      }
+      return ApiSuccess(parser(jsonDecode(response.body)));
     } catch (error, stackTrace) {
       if (kDebugMode) {
         debugPrint('ApiRequest deserialization error: $error');

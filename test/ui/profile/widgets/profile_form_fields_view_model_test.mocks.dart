@@ -7,7 +7,7 @@ import 'dart:async' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:sport_matcher/data/profile/domain/profile_domain.dart' as _i5;
-import 'package:sport_matcher/data/profile/repository/abstract_profiles_repository.dart'
+import 'package:sport_matcher/data/profile/repository/profiles_repository.dart'
     as _i3;
 import 'package:sport_matcher/ui/core/utilities/validators/abstract_text_validator.dart'
     as _i2;
@@ -37,12 +37,12 @@ class MockAbstractTextValidator extends _i1.Mock
   }
 }
 
-/// A class which mocks [AbstractProfilesRepository].
+/// A class which mocks [ProfilesRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAbstractProfilesRepository extends _i1.Mock
-    implements _i3.AbstractProfilesRepository {
-  MockAbstractProfilesRepository() {
+class MockProfilesRepository extends _i1.Mock
+    implements _i3.ProfilesRepository {
+  MockProfilesRepository() {
     _i1.throwOnMissingStub(this);
   }
 

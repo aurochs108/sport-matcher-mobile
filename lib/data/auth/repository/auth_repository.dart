@@ -1,6 +1,5 @@
 import 'package:sport_matcher/data/auth/mapper/auth_tokens_mapper.dart';
 import 'package:sport_matcher/data/auth/network/api/auth_api.dart';
-import 'package:sport_matcher/data/auth/persistence/database/abstract_auth_tokens_database.dart';
 import 'package:sport_matcher/data/auth/persistence/database/auth_tokens_database.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
 import 'package:sport_matcher/data/core/mapper/api_error_to_user_message_mapper.dart';
@@ -10,14 +9,14 @@ import 'package:sport_matcher/data/device_id/repository/device_id_repository.dar
 class AuthRepository {
   final AuthApi _authApi;
   final AbstractDeviceIdRepository _deviceIdRepository;
-  final AbstractAuthTokensDatabase _tokenDatabase;
+  final AuthTokensDatabase _tokenDatabase;
   final AuthTokensMapper _mapper;
   final ApiErrorToUserMessageMapper _errorMapper;
 
   AuthRepository({
     AuthApi? authApi,
     AbstractDeviceIdRepository? deviceIdRepository,
-    AbstractAuthTokensDatabase? tokenDatabase,
+    AuthTokensDatabase? tokenDatabase,
     AuthTokensMapper? mapper,
     ApiErrorToUserMessageMapper? errorMapper,
   }) : _authApi = authApi ?? AuthApi(),
@@ -67,6 +66,27 @@ class AuthRepository {
         case ApiSuccess(:final data):
           final tokens = _mapper.responseToDomain(data);
           await _tokenDatabase.saveTokens(_mapper.domainToEntity(tokens));
+          return ApiSuccess<void>(null);
+        case ApiError():
+          return _mapError(result);
+      }
+    } catch (error) {
+      return ApiError<void>(_errorMapper.map(error));
+    }
+  }
+
+  Future<ApiResult<void>> logout() async {
+    try {
+      final tokens = await _tokenDatabase.loadTokens();
+      if (tokens == null) {
+        return ApiSuccess<void>(null);
+      }
+
+      final result = await _authApi.logout(refreshToken: tokens.refreshToken);
+
+      switch (result) {
+        case ApiSuccess():
+          await _tokenDatabase.deleteTokens();
           return ApiSuccess<void>(null);
         case ApiError():
           return _mapError(result);
