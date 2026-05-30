@@ -30,15 +30,12 @@ class _AuthGateState extends State<AuthGate> {
     return StreamBuilder<AuthState?>(
       stream: widget._viewModel.authStateStream,
       initialData: widget._viewModel.authState,
-      builder: (context, snapshot) {
+      builder: (_, snapshot) {
         final authState = snapshot.data;
-        if (authState == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
         return switch (authState) {
+          null => const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          ),
           AuthState.authenticated => BottomNavigationBarScreen(),
           AuthState.unauthenticated => WelcomeScreen(),
         };
