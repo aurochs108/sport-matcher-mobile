@@ -6,10 +6,7 @@ import 'package:sport_matcher/data/auth/persistence/entity/auth_tokens_entity.da
 import 'package:sport_matcher/data/auth/repository/auth_repository.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
 
-enum AuthState {
-  authenticated,
-  unauthenticated,
-}
+enum AuthState { authenticated, unauthenticated }
 
 class AuthTokenManager {
   static final AuthTokenManager instance = AuthTokenManager._();
@@ -26,10 +23,10 @@ class AuthTokenManager {
     AuthTokensDatabase? tokenDatabase,
     DateTime Function()? now,
   }) : this._(
-          authRepository: authRepository,
-          tokenDatabase: tokenDatabase,
-          now: now,
-        );
+         authRepository: authRepository,
+         tokenDatabase: tokenDatabase,
+         now: now,
+       );
 
   AuthTokenManager._({
     AuthRepository? authRepository,
@@ -56,10 +53,6 @@ class AuthTokenManager {
     return authState;
   }
 
-  void dispose() {
-    _authStateController.close();
-  }
-
   Future<AuthState> _resolveSessionAuthState() async {
     try {
       final tokens = await _tokenDatabase.loadTokens();
@@ -74,13 +67,6 @@ class AuthTokenManager {
       return await _refreshExpiredTokens();
     } catch (_) {
       return AuthState.unauthenticated;
-    }
-  }
-
-  void _setAuthState(AuthState authState) {
-    _authState = authState;
-    if (!_authStateController.isClosed) {
-      _authStateController.add(authState);
     }
   }
 
@@ -100,5 +86,10 @@ class AuthTokenManager {
         await _authRepository.clearStoredTokens();
         return AuthState.unauthenticated;
     }
+  }
+
+  void _setAuthState(AuthState authState) {
+    _authState = authState;
+    _authStateController.add(authState);
   }
 }

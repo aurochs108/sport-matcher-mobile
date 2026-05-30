@@ -29,10 +29,6 @@ void main() {
       );
     });
 
-    tearDown(() {
-      sut.dispose();
-    });
-
     test('isSessionAuthenticated updates authState', () async {
       final tokens = _tokens(
         expiresAt: now.add(const Duration(minutes: 5)),
