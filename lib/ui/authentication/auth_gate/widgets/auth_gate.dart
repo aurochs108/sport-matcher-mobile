@@ -3,6 +3,7 @@ import 'package:sport_matcher/data/auth/manager/auth_token_manager.dart';
 import 'package:sport_matcher/ui/authentication/auth_gate/widgets/auth_gate_view_model.dart';
 import 'package:sport_matcher/ui/authentication/welcome/widgets/welcome_screen.dart';
 import 'package:sport_matcher/ui/bottom_navigation_bar/widgets/bottom_navigation_bar_screen.dart';
+import 'package:sport_matcher/ui/core/ui/loaders/full_screen_loader.dart';
 
 class AuthGate extends StatefulWidget {
   final AuthGateViewModel _viewModel;
@@ -33,9 +34,7 @@ class _AuthGateState extends State<AuthGate> {
       builder: (_, snapshot) {
         final authState = snapshot.data;
         return switch (authState) {
-          null => const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          ),
+          null => const FullScreenLoader(),
           AuthState.authenticated => BottomNavigationBarScreen(),
           AuthState.unauthenticated => WelcomeScreen(),
         };
