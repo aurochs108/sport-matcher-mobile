@@ -75,27 +75,6 @@ class AuthRepository {
     }
   }
 
-  Future<ApiResult<void>> logout() async {
-    try {
-      final tokens = await _tokenDatabase.loadTokens();
-      if (tokens == null) {
-        return ApiSuccess<void>(null);
-      }
-
-      final result = await _authApi.logout(refreshToken: tokens.refreshToken);
-
-      switch (result) {
-        case ApiSuccess():
-          await _tokenDatabase.deleteTokens();
-          return ApiSuccess<void>(null);
-        case ApiError():
-          return _mapError(result);
-      }
-    } catch (error) {
-      return ApiError<void>(_errorMapper.map(error));
-    }
-  }
-
   Future<ApiResult<void>> refreshTokens() async {
     try {
       final tokens = await _tokenDatabase.loadTokens();
@@ -135,5 +114,26 @@ class AuthRepository {
       statusCode: error.statusCode,
       code: error.code,
     );
+  }
+
+  Future<ApiResult<void>> logout() async {
+    try {
+      final tokens = await _tokenDatabase.loadTokens();
+      if (tokens == null) {
+        return ApiSuccess<void>(null);
+      }
+
+      final result = await _authApi.logout(refreshToken: tokens.refreshToken);
+
+      switch (result) {
+        case ApiSuccess():
+          await _tokenDatabase.deleteTokens();
+          return ApiSuccess<void>(null);
+        case ApiError():
+          return _mapError(result);
+      }
+    } catch (error) {
+      return ApiError<void>(_errorMapper.map(error));
+    }
   }
 }
