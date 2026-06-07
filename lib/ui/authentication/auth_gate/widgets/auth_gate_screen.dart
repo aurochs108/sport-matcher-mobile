@@ -5,21 +5,20 @@ import 'package:sport_matcher/ui/authentication/welcome/widgets/welcome_screen.d
 import 'package:sport_matcher/ui/bottom_navigation_bar/widgets/bottom_navigation_bar_screen.dart';
 import 'package:sport_matcher/ui/core/ui/loaders/full_screen_loader.dart';
 
-class AuthGate extends StatefulWidget {
+class AuthGateScreen extends StatefulWidget {
   final AuthGateViewModel _viewModel;
 
-  AuthGate({
+  AuthGateScreen({
     super.key,
     AuthGateViewModel? viewModel,
     AuthTokenManager? authManager,
-  })
-      : _viewModel = viewModel ?? AuthGateViewModel(authManager: authManager);
+  }) : _viewModel = viewModel ?? AuthGateViewModel(authManager: authManager);
 
   @override
-  State<AuthGate> createState() => _AuthGateState();
+  State<AuthGateScreen> createState() => _AuthGateScreenState();
 }
 
-class _AuthGateState extends State<AuthGate> {
+class _AuthGateScreenState extends State<AuthGateScreen> {
   @override
   void initState() {
     super.initState();
