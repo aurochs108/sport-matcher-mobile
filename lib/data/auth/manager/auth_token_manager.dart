@@ -47,10 +47,9 @@ class AuthTokenManager {
     yield* _authStateController.stream;
   }
 
-  Future<AuthState> isSessionAuthenticated() async {
+  Future<void> isSessionAuthenticated() async {
     final authState = await _resolveSessionAuthState();
     _setAuthState(authState);
-    return authState;
   }
 
   Future<AuthState> _resolveSessionAuthState() async {

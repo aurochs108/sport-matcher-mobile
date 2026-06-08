@@ -39,34 +39,33 @@ void main() {
       when(tokenDatabase.loadTokens()).thenAnswer((_) async => tokens);
 
       await pumpEventQueue();
-      final result = await sut.isSessionAuthenticated();
+      await sut.isSessionAuthenticated();
       await pumpEventQueue();
 
-      expect(result, AuthState.authenticated);
       expect(sut.authState, AuthState.authenticated);
       expect(emittedStates, [null, AuthState.authenticated]);
     });
 
-    test('isSessionAuthenticated returns unauthenticated without tokens', () async {
+    test('isSessionAuthenticated sets unauthenticated without tokens', () async {
       when(tokenDatabase.loadTokens()).thenAnswer((_) async => null);
 
-      final result = await sut.isSessionAuthenticated();
+      await sut.isSessionAuthenticated();
 
-      expect(result, AuthState.unauthenticated);
+      expect(sut.authState, AuthState.unauthenticated);
       verify(tokenDatabase.loadTokens()).called(1);
       verifyNever(authRepository.refreshTokens());
       verifyNever(authRepository.clearStoredTokens());
     });
 
-    test('isSessionAuthenticated returns authenticated for valid tokens', () async {
+    test('isSessionAuthenticated sets authenticated for valid tokens', () async {
       final tokens = _tokens(
         expiresAt: now.add(const Duration(minutes: 5)),
       );
       when(tokenDatabase.loadTokens()).thenAnswer((_) async => tokens);
 
-      final result = await sut.isSessionAuthenticated();
+      await sut.isSessionAuthenticated();
 
-      expect(result, AuthState.authenticated);
+      expect(sut.authState, AuthState.authenticated);
       verify(tokenDatabase.loadTokens()).called(1);
       verifyNever(authRepository.refreshTokens());
       verifyNever(authRepository.clearStoredTokens());
@@ -81,9 +80,9 @@ void main() {
         authRepository.refreshTokens(),
       ).thenAnswer((_) async => const ApiSuccess<void>(null));
 
-      final result = await sut.isSessionAuthenticated();
+      await sut.isSessionAuthenticated();
 
-      expect(result, AuthState.authenticated);
+      expect(sut.authState, AuthState.authenticated);
       verify(tokenDatabase.loadTokens()).called(1);
       verify(authRepository.refreshTokens()).called(1);
       verifyNever(authRepository.clearStoredTokens());
@@ -101,20 +100,20 @@ void main() {
         authRepository.clearStoredTokens(),
       ).thenAnswer((_) async => const ApiSuccess<void>(null));
 
-      final result = await sut.isSessionAuthenticated();
+      await sut.isSessionAuthenticated();
 
-      expect(result, AuthState.unauthenticated);
+      expect(sut.authState, AuthState.unauthenticated);
       verify(tokenDatabase.loadTokens()).called(1);
       verify(authRepository.refreshTokens()).called(1);
       verify(authRepository.clearStoredTokens()).called(1);
     });
 
-    test('isSessionAuthenticated returns unauthenticated on storage error', () async {
+    test('isSessionAuthenticated sets unauthenticated on storage error', () async {
       when(tokenDatabase.loadTokens()).thenThrow(Exception('read failed'));
 
-      final result = await sut.isSessionAuthenticated();
+      await sut.isSessionAuthenticated();
 
-      expect(result, AuthState.unauthenticated);
+      expect(sut.authState, AuthState.unauthenticated);
       verify(tokenDatabase.loadTokens()).called(1);
       verifyNever(authRepository.refreshTokens());
       verifyNever(authRepository.clearStoredTokens());
