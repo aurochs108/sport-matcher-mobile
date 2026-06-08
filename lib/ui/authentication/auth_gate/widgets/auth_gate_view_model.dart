@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:sport_matcher/data/auth/manager/auth_token_manager.dart';
 
 class AuthGateViewModel {
-  final AuthTokenManager _authManager;
+  final AuthTokenManager _authTokenManager;
 
-  AuthGateViewModel({AuthTokenManager? authManager})
-      : _authManager = authManager ?? AuthTokenManager.instance;
+  AuthGateViewModel({AuthTokenManager? authTokenManager})
+      : _authTokenManager = authTokenManager ?? AuthTokenManager.instance;
 
-  AuthState? get authState => _authManager.authState;
+  AuthState? get authState => _authTokenManager.authState;
 
-  Stream<AuthState?> get authStateStream => _authManager.authStateStream;
+  Stream<AuthState?> get authStateStream => _authTokenManager.authStateStream;
 
   void checkSession() {
-    unawaited(_authManager.isSessionAuthenticated());
+    unawaited(_authTokenManager.isSessionAuthenticated());
   }
 }

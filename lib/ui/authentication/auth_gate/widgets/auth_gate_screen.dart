@@ -11,8 +11,9 @@ class AuthGateScreen extends StatefulWidget {
   AuthGateScreen({
     super.key,
     AuthGateViewModel? viewModel,
-    AuthTokenManager? authManager,
-  }) : _viewModel = viewModel ?? AuthGateViewModel(authManager: authManager);
+    AuthTokenManager? authTokenManager,
+  }) : _viewModel =
+           viewModel ?? AuthGateViewModel(authTokenManager: authTokenManager);
 
   @override
   State<AuthGateScreen> createState() => _AuthGateScreenState();
