@@ -6,14 +6,17 @@ import 'package:uuid/uuid.dart';
 class AuthTokensEntityRandom {
   static AuthTokensEntity random() {
     final random = Random();
+    final expiresIn = random.nextInt(86400) + 1;
 
     return AuthTokensEntity(
       accessToken: const Uuid().v4(),
       refreshToken: const Uuid().v4(),
       tokenType: _randomTokenType(random),
-      expiresIn: random.nextInt(86400) + 1,
+      expiresIn: expiresIn,
       accessTokenExpiresAtMillisecondsSinceEpoch:
-          DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch,
+          DateTime.now()
+              .add(Duration(seconds: expiresIn))
+              .millisecondsSinceEpoch,
     );
   }
 
