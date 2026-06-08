@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:sport_matcher/data/auth/manager/auth_token_manager.dart';
 
-class AuthGateViewModel {
+class AuthGateScreenModel {
   final AuthTokenManager _authTokenManager;
 
-  AuthGateViewModel({AuthTokenManager? authTokenManager})
+  AuthGateScreenModel({AuthTokenManager? authTokenManager})
       : _authTokenManager = authTokenManager ?? AuthTokenManager.instance;
 
   AuthState? get authState => _authTokenManager.authState;
