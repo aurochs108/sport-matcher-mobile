@@ -75,6 +75,47 @@ class AuthRepository {
     }
   }
 
+  Future<ApiResult<void>> refreshTokens() async {
+    try {
+      final tokens = await _tokenDatabase.loadTokens();
+      if (tokens == null) {
+        return const ApiError<void>('No refresh token found.');
+      }
+
+      final result = await _authApi.refreshTokens(
+        refreshToken: tokens.refreshToken,
+      );
+
+      switch (result) {
+        case ApiSuccess(:final data):
+          final tokens = _mapper.responseToDomain(data);
+          await _tokenDatabase.saveTokens(_mapper.domainToEntity(tokens));
+          return ApiSuccess<void>(null);
+        case ApiError():
+          return _mapError(result);
+      }
+    } catch (error) {
+      return ApiError<void>(_errorMapper.map(error));
+    }
+  }
+
+  Future<ApiResult<void>> clearStoredTokens() async {
+    try {
+      await _tokenDatabase.deleteTokens();
+      return ApiSuccess<void>(null);
+    } catch (error) {
+      return ApiError<void>(_errorMapper.map(error));
+    }
+  }
+
+  ApiError<void> _mapError<T>(ApiError<T> error) {
+    return ApiError<void>(
+      error.message,
+      statusCode: error.statusCode,
+      code: error.code,
+    );
+  }
+
   Future<ApiResult<void>> logout() async {
     try {
       final tokens = await _tokenDatabase.loadTokens();
@@ -94,13 +135,5 @@ class AuthRepository {
     } catch (error) {
       return ApiError<void>(_errorMapper.map(error));
     }
-  }
-
-  ApiError<void> _mapError<T>(ApiError<T> error) {
-    return ApiError<void>(
-      error.message,
-      statusCode: error.statusCode,
-      code: error.code,
-    );
   }
 }

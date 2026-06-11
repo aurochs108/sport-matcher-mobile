@@ -119,6 +119,25 @@ class MockAuthApi extends _i1.Mock implements _i4.AuthApi {
             ),
           )
           as _i5.Future<_i6.ApiResult<void>>);
+
+  @override
+  _i5.Future<_i6.ApiResult<_i7.AuthTokensReponse>> refreshTokens({
+    required String? refreshToken,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#refreshTokens, [], {
+              #refreshToken: refreshToken,
+            }),
+            returnValue: _i5.Future<_i6.ApiResult<_i7.AuthTokensReponse>>.value(
+              _i8.dummyValue<_i6.ApiResult<_i7.AuthTokensReponse>>(
+                this,
+                Invocation.method(#refreshTokens, [], {
+                  #refreshToken: refreshToken,
+                }),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.ApiResult<_i7.AuthTokensReponse>>);
 }
 
 /// A class which mocks [AbstractDeviceIdRepository].

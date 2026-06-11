@@ -6,7 +6,12 @@ import '../../../random/auth_tokens_response_random.dart';
 
 void main() {
   group('AuthTokensMapper', () {
-    final sut = AuthTokensMapper();
+    final now = DateTime(2026, 1, 1, 12);
+    late AuthTokensMapper sut;
+
+    setUp(() {
+      sut = AuthTokensMapper(now: () => now);
+    });
 
     test('responseToDomain maps response fields to domain', () {
       final response = AuthTokensResponseRandom.random();
@@ -28,6 +33,10 @@ void main() {
       expect(result.refreshToken, domain.refreshToken);
       expect(result.tokenType, domain.tokenType);
       expect(result.expiresIn, domain.expiresIn);
+      expect(
+        result.accessTokenExpiresAtMillisecondsSinceEpoch,
+        now.add(Duration(seconds: domain.expiresIn)).millisecondsSinceEpoch,
+      );
     });
   });
 }

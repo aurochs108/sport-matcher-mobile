@@ -119,4 +119,30 @@ class MockAuthRepository extends _i1.Mock implements _i5.AuthRepository {
             ),
           )
           as _i3.Future<_i6.ApiResult<void>>);
+
+  @override
+  _i3.Future<_i6.ApiResult<void>> refreshTokens() =>
+      (super.noSuchMethod(
+            Invocation.method(#refreshTokens, []),
+            returnValue: _i3.Future<_i6.ApiResult<void>>.value(
+              _i7.dummyValue<_i6.ApiResult<void>>(
+                this,
+                Invocation.method(#refreshTokens, []),
+              ),
+            ),
+          )
+          as _i3.Future<_i6.ApiResult<void>>);
+
+  @override
+  _i3.Future<_i6.ApiResult<void>> clearStoredTokens() =>
+      (super.noSuchMethod(
+            Invocation.method(#clearStoredTokens, []),
+            returnValue: _i3.Future<_i6.ApiResult<void>>.value(
+              _i7.dummyValue<_i6.ApiResult<void>>(
+                this,
+                Invocation.method(#clearStoredTokens, []),
+              ),
+            ),
+          )
+          as _i3.Future<_i6.ApiResult<void>>);
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sport_matcher/ui/authentication/welcome/widgets/welcome_screen.dart';
+import 'package:sport_matcher/ui/authentication/auth_gate/widgets/auth_gate_screen.dart';
 
 void main() {
-  runApp(MaterialApp(home: WelcomeScreen()));
+  runApp(MaterialApp(home: AuthGateScreen()));
 }

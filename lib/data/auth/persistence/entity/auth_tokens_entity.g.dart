@@ -12,6 +12,10 @@ AuthTokensEntity _$AuthTokensEntityFromJson(Map<String, dynamic> json) =>
       refreshToken: json['refreshToken'] as String,
       tokenType: json['tokenType'] as String,
       expiresIn: (json['expiresIn'] as num).toInt(),
+      accessTokenExpiresAtMillisecondsSinceEpoch:
+          (json['accessTokenExpiresAtMillisecondsSinceEpoch'] as num?)
+              ?.toInt() ??
+          0,
     );
 
 Map<String, dynamic> _$AuthTokensEntityToJson(AuthTokensEntity instance) =>
@@ -20,4 +24,6 @@ Map<String, dynamic> _$AuthTokensEntityToJson(AuthTokensEntity instance) =>
       'refreshToken': instance.refreshToken,
       'tokenType': instance.tokenType,
       'expiresIn': instance.expiresIn,
+      'accessTokenExpiresAtMillisecondsSinceEpoch':
+          instance.accessTokenExpiresAtMillisecondsSinceEpoch,
     };
