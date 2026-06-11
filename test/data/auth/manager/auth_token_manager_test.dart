@@ -7,7 +7,7 @@ import 'package:sport_matcher/data/auth/persistence/entity/auth_tokens_entity.da
 import 'package:sport_matcher/data/auth/repository/auth_repository.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
 
-import 'auth_manager_test.mocks.dart';
+import 'auth_token_manager_test.mocks.dart';
 
 @GenerateMocks([AuthRepository, AuthTokensDatabase])
 void main() {
@@ -29,14 +29,15 @@ void main() {
       );
     });
 
-    test('isSessionAuthenticated updates authState', () async {
+    test('isSessionAuthenticated sets authenticated when token is available', () async {
       final tokens = _tokens(
         expiresAt: now.add(const Duration(minutes: 5)),
       );
-      final emittedStates = <AuthState?>[];
-      final subscription = sut.authStateStream.listen(emittedStates.add);
-      addTearDown(subscription.cancel);
-      when(tokenDatabase.loadTokens()).thenAnswer((_) async => tokens);
+      final emittedStates = _listenToAuthStateStreamAndStubTokens(
+        sut: sut,
+        tokenDatabase: tokenDatabase,
+        tokens: tokens,
+      );
 
       await pumpEventQueue();
       await sut.isSessionAuthenticated();
@@ -44,28 +45,24 @@ void main() {
 
       expect(sut.authState, AuthState.authenticated);
       expect(emittedStates, [null, AuthState.authenticated]);
-    });
-
-    test('isSessionAuthenticated sets unauthenticated without tokens', () async {
-      when(tokenDatabase.loadTokens()).thenAnswer((_) async => null);
-
-      await sut.isSessionAuthenticated();
-
-      expect(sut.authState, AuthState.unauthenticated);
       verify(tokenDatabase.loadTokens()).called(1);
       verifyNever(authRepository.refreshTokens());
       verifyNever(authRepository.clearStoredTokens());
     });
 
-    test('isSessionAuthenticated sets authenticated for valid tokens', () async {
-      final tokens = _tokens(
-        expiresAt: now.add(const Duration(minutes: 5)),
+    test('isSessionAuthenticated sets unauthenticated without tokens', () async {
+      final emittedStates = _listenToAuthStateStreamAndStubTokens(
+        sut: sut,
+        tokenDatabase: tokenDatabase,
+        tokens: null,
       );
-      when(tokenDatabase.loadTokens()).thenAnswer((_) async => tokens);
 
+      await pumpEventQueue();
       await sut.isSessionAuthenticated();
+      await pumpEventQueue();
 
-      expect(sut.authState, AuthState.authenticated);
+      expect(sut.authState, AuthState.unauthenticated);
+      expect(emittedStates, [null, AuthState.unauthenticated]);
       verify(tokenDatabase.loadTokens()).called(1);
       verifyNever(authRepository.refreshTokens());
       verifyNever(authRepository.clearStoredTokens());
@@ -75,14 +72,21 @@ void main() {
       final tokens = _tokens(
         expiresAt: now.subtract(const Duration(seconds: 1)),
       );
-      when(tokenDatabase.loadTokens()).thenAnswer((_) async => tokens);
+      final emittedStates = _listenToAuthStateStreamAndStubTokens(
+        sut: sut,
+        tokenDatabase: tokenDatabase,
+        tokens: tokens,
+      );
       when(
         authRepository.refreshTokens(),
       ).thenAnswer((_) async => const ApiSuccess<void>(null));
 
+      await pumpEventQueue();
       await sut.isSessionAuthenticated();
+      await pumpEventQueue();
 
       expect(sut.authState, AuthState.authenticated);
+      expect(emittedStates, [null, AuthState.authenticated]);
       verify(tokenDatabase.loadTokens()).called(1);
       verify(authRepository.refreshTokens()).called(1);
       verifyNever(authRepository.clearStoredTokens());
@@ -92,7 +96,11 @@ void main() {
       final tokens = _tokens(
         expiresAt: now.subtract(const Duration(seconds: 1)),
       );
-      when(tokenDatabase.loadTokens()).thenAnswer((_) async => tokens);
+      final emittedStates = _listenToAuthStateStreamAndStubTokens(
+        sut: sut,
+        tokenDatabase: tokenDatabase,
+        tokens: tokens,
+      );
       when(
         authRepository.refreshTokens(),
       ).thenAnswer((_) async => const ApiError<void>('Refresh failed'));
@@ -100,25 +108,49 @@ void main() {
         authRepository.clearStoredTokens(),
       ).thenAnswer((_) async => const ApiSuccess<void>(null));
 
+      await pumpEventQueue();
       await sut.isSessionAuthenticated();
+      await pumpEventQueue();
 
       expect(sut.authState, AuthState.unauthenticated);
+      expect(emittedStates, [null, AuthState.unauthenticated]);
       verify(tokenDatabase.loadTokens()).called(1);
       verify(authRepository.refreshTokens()).called(1);
       verify(authRepository.clearStoredTokens()).called(1);
     });
 
     test('isSessionAuthenticated sets unauthenticated on storage error', () async {
+      final emittedStates = _listenToAuthStateStream(sut);
       when(tokenDatabase.loadTokens()).thenThrow(Exception('read failed'));
 
+      await pumpEventQueue();
       await sut.isSessionAuthenticated();
+      await pumpEventQueue();
 
       expect(sut.authState, AuthState.unauthenticated);
+      expect(emittedStates, [null, AuthState.unauthenticated]);
       verify(tokenDatabase.loadTokens()).called(1);
       verifyNever(authRepository.refreshTokens());
       verifyNever(authRepository.clearStoredTokens());
     });
   });
+}
+
+List<AuthState?> _listenToAuthStateStreamAndStubTokens({
+  required AuthTokenManager sut,
+  required MockAuthTokensDatabase tokenDatabase,
+  required AuthTokensEntity? tokens,
+}) {
+  final emittedStates = _listenToAuthStateStream(sut);
+  when(tokenDatabase.loadTokens()).thenAnswer((_) async => tokens);
+  return emittedStates;
+}
+
+List<AuthState?> _listenToAuthStateStream(AuthTokenManager sut) {
+  final emittedStates = <AuthState?>[];
+  final subscription = sut.authStateStream.listen(emittedStates.add);
+  addTearDown(subscription.cancel);
+  return emittedStates;
 }
 
 AuthTokensEntity _tokens({required DateTime expiresAt}) {
