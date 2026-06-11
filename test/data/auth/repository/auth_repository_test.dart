@@ -482,6 +482,7 @@ void main() {
       expect((result as ApiError<void>).message, errorMessage);
       expect(result.statusCode, statusCode);
       expect(result.code, errorCode);
+      verify(tokenDatabase.loadTokens()).called(1);
       verify(
         authApi.refreshTokens(refreshToken: storedTokens.refreshToken),
       ).called(1);
