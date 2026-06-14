@@ -1,36 +1,55 @@
-name: trivy
+name: Security Scan
 
 on:
-  pull_request:
-    branches:
-      - main
-    types: [opened, synchronize, reopened, ready_for_review]
   push:
-    branches:
-      - main
-  schedule:
-    - cron: "0 20 * * *"
-      timezone: "Europe/Warsaw"
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
+  schedule:
+    - cron: "0 18 * * *"
 
 permissions:
   contents: read
 
 jobs:
-  trivy:
-    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
+  scan:
+    if: github.event.pull_request.draft != true
     runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v6.0.3
 
-      - name: Run Trivy vulnerability scanner
+      - name: Run Trivy scanner
+        id: trivy
         uses: aquasecurity/trivy-action@v0.36.0
+        continue-on-error: true
         with:
           scan-type: fs
           scan-ref: .
-          format: table
-          exit-code: "1"
-          ignore-unfixed: true
-          vuln-type: os,library
+          scanners: vuln,secret
           severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          format: table
+          output: trivy.txt
+          exit-code: "1"
+
+      - name: Publish Trivy output
+        if: always()
+        run: |
+          if [[ -s trivy.txt ]]; then
+            {
+              echo "### Trivy Security Scan"
+              echo "<details><summary>Results</summary>"
+              echo ""
+              echo '```text'
+              cat trivy.txt
+              echo '```'
+              echo "</details>"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Fail on Trivy findings
+        if: steps.trivy.outcome == 'failure'
+        run: exit 1
