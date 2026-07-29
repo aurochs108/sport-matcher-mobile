@@ -25,7 +25,7 @@ enum ActivitiesConfig {
       case ActivitiesConfig.tennis:
         return 'Tennis';
       case ActivitiesConfig.voleyball:
-        return 'Voleyball';
+        return 'Volleyball';
     }
   }
 }

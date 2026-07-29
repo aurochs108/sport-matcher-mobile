@@ -18,7 +18,15 @@ class CreateProfileScreen extends StatelessWidget {
         ),
         body: ProfileFormFieldsView(
           buttonTitle: "Next",
+          saveProfile: _viewModel.createProfile,
           onSaved: () => _viewModel.navigateToHomeAction(Navigator.of(context)),
+          onSaveFailed: (message) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(content: Text(message), backgroundColor: Colors.red),
+              );
+          },
         ),
       ),
     );

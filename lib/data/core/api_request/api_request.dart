@@ -13,6 +13,7 @@ import 'package:sport_matcher/data/core/api_request/http_method.dart';
 import 'package:sport_matcher/data/core/mapper/api_error_to_user_message_mapper.dart';
 
 class ApiRequest<T> {
+  final String baseUrl;
   final String path;
   final HttpMethod method;
   final Map<String, dynamic>? body;
@@ -22,6 +23,7 @@ class ApiRequest<T> {
   final ApiErrorToUserMessageMapper _errorMapper;
 
   ApiRequest({
+    this.baseUrl = ApiConfig.baseUrl,
     required this.path,
     required this.method,
     this.responseParser,
@@ -34,7 +36,7 @@ class ApiRequest<T> {
 
   Future<ApiResult<T>> execute() async {
     try {
-      final url = Uri.parse('${ApiConfig.baseUrl}$path');
+      final url = Uri.parse('$baseUrl$path');
       final headers = {
         'Content-Type': 'application/json',
       };

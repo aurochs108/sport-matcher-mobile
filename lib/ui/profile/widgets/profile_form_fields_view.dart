@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sport_matcher/data/profile/domain/profile_domain.dart';
 import 'package:sport_matcher/ui/core/theme/app_theme.dart';
-import 'package:sport_matcher/ui/core/ui/buttons/rounded_button/rounded_button.dart';
+import 'package:sport_matcher/ui/core/ui/buttons/async_rounded_button/async_rounded_button.dart';
 import 'package:sport_matcher/ui/core/ui/collections/chips_collection_view.dart';
 import 'package:sport_matcher/ui/core/ui/text_fields/plain_text_field.dart';
 import 'package:sport_matcher/ui/core/ui/texts/title_medium_text.dart';
@@ -12,12 +12,16 @@ import 'package:sport_matcher/ui/profile/widgets/profile_form_fields_view_model.
 class ProfileFormFieldsView extends StatefulWidget {
   final String buttonTitle;
   final VoidCallback? onSaved;
+  final ValueChanged<String>? onSaveFailed;
+  final ProfileSaveAction? saveProfile;
   final ProfileDomain? initialProfile;
 
   const ProfileFormFieldsView({
     super.key,
     required this.buttonTitle,
     this.onSaved,
+    this.onSaveFailed,
+    this.saveProfile,
     this.initialProfile,
   });
 
@@ -29,6 +33,8 @@ class _ProfileFormFieldsViewState extends State<ProfileFormFieldsView> {
   late final _viewModel = ProfileFormFieldsViewModel(
     buttonTitle: widget.buttonTitle,
     onSaved: widget.onSaved,
+    onSaveFailed: widget.onSaveFailed,
+    saveProfile: widget.saveProfile,
     initialProfile: widget.initialProfile,
   );
 
@@ -79,7 +85,7 @@ class _ProfileFormFieldsViewState extends State<ProfileFormFieldsView> {
               ),
             ),
           ),
-          RoundedButton(
+          AsyncRoundedButton(
             buttonTitle: _viewModel.buttonTitle,
             onPressed: _viewModel.buttonAction,
           ),

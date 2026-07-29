@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sport_matcher/data/core/api_request/api_result.dart';
+import 'package:sport_matcher/data/core/mapper/api_error_to_user_message_mapper.dart';
 import 'package:sport_matcher/data/profile/config/activities_config.dart';
 import 'package:sport_matcher/data/profile/config/profile_config.dart';
 import 'package:sport_matcher/data/profile/domain/profile_domain.dart';
@@ -7,9 +9,14 @@ import 'package:sport_matcher/data/profile/repository/profiles_repository.dart';
 import 'package:sport_matcher/ui/core/utilities/validators/abstract_text_validator.dart';
 import 'package:sport_matcher/ui/core/utilities/validators/text_length_validator.dart';
 
+typedef ProfileSaveAction =
+    Future<ApiResult<void>> Function(ProfileDomain profile);
+
 class ProfileFormFieldsViewModel {
   final String buttonTitle;
   final VoidCallback? _onSaved;
+  final ValueChanged<String>? _onSaveFailed;
+  final ProfileSaveAction? _saveProfileAction;
   final ImagePicker _picker;
   XFile? _pickedImage;
   final nameTextController = TextEditingController();
@@ -18,16 +25,22 @@ class ProfileFormFieldsViewModel {
     for (final activity in ActivitiesConfig.values) activity: false,
   };
   final ProfilesRepository _profileRepository;
+  final ApiErrorToUserMessageMapper _errorMapper;
   Function()? onStateChanged;
 
   ProfileFormFieldsViewModel({
     required this.buttonTitle,
     VoidCallback? onSaved,
+    ValueChanged<String>? onSaveFailed,
+    ProfileSaveAction? saveProfile,
     AbstractTextValidator? nameValidator,
     ProfileDomain? initialProfile,
     ProfilesRepository? profileRepository,
     ImagePicker? imagePicker,
+    ApiErrorToUserMessageMapper? errorMapper,
   }) : _onSaved = onSaved,
+       _onSaveFailed = onSaveFailed,
+       _saveProfileAction = saveProfile,
        nameValidator =
            nameValidator ??
            TextLengthValidator(
@@ -35,7 +48,8 @@ class ProfileFormFieldsViewModel {
              maximumLength: ProfileConfig.nameMaxLength,
            ),
        _profileRepository = profileRepository ?? ProfilesRepository(),
-       _picker = imagePicker ?? ImagePicker() {
+       _picker = imagePicker ?? ImagePicker(),
+       _errorMapper = errorMapper ?? const ApiErrorToUserMessageMapper() {
     nameTextController.addListener(_onStateChanged);
     if (initialProfile != null) {
       _loadFromProfile(initialProfile);
@@ -88,21 +102,29 @@ class ProfileFormFieldsViewModel {
     onStateChanged?.call();
   }
 
-  VoidCallback? get buttonAction {
+  Future<void> Function()? get buttonAction {
     final saved = _onSaved;
     if (saved == null) return null;
     return _getSaveButtonAction(saved);
   }
 
-  VoidCallback? _getSaveButtonAction(VoidCallback onSaved) {
+  Future<void> Function()? _getSaveButtonAction(VoidCallback onSaved) {
     final hasName = nameValidator.validate(nameTextController.text) == null;
 
     if (!_hasImage || !hasName || !_hasSelectedActivities) return null;
 
-    return () {
-      _saveProfile().then((_) {
-        onSaved();
-      });
+    return () async {
+      try {
+        final result = await _saveProfile();
+        switch (result) {
+          case ApiSuccess():
+            onSaved();
+          case ApiError(:final message):
+            _onSaveFailed?.call(message);
+        }
+      } catch (error) {
+        _onSaveFailed?.call(_errorMapper.map(error));
+      }
     };
   }
 
@@ -111,14 +133,21 @@ class ProfileFormFieldsViewModel {
   bool get _hasSelectedActivities =>
       _activities.values.any((isSelected) => isSelected);
 
-  Future<void> _saveProfile() async {
+  Future<ApiResult<void>> _saveProfile() async {
     final imagePath = _pickedImage?.path;
     final profile = ProfileDomain(
       name: nameTextController.text,
       profileImagePath: imagePath!,
       activities: Map<ActivitiesConfig, bool>.from(_activities),
     );
+
+    final saveProfileAction = _saveProfileAction;
+    if (saveProfileAction != null) {
+      return saveProfileAction(profile);
+    }
+
     await _profileRepository.addProfile(profile);
+    return const ApiSuccess<void>(null);
   }
 
   void dispose() {
