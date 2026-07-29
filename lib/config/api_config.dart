@@ -5,6 +5,6 @@ final class ApiConfig {
   );
   static const String profilesBaseUrl = String.fromEnvironment(
     'PROFILES_API_BASE_URL',
-    defaultValue: 'http://localhost:8081',
+    defaultValue: 'http://localhost:8080',
   );
 }
