@@ -67,6 +67,15 @@ class _CreatedProfileScreenState extends State<CreatedProfileScreen> {
                             profileName: profileName ?? "Missing profile data",
                             selectedActivities: selectedActivities,
                           ),
+                          const SizedBox(height: AppTheme.columnSpacingSmall),
+                          FutureBuilder<String?>(
+                            future: _viewModel.profileIdFuture,
+                            builder: (context, profileIdSnapshot) {
+                              final profileId = profileIdSnapshot.data;
+                              if (profileId == null) return const SizedBox.shrink();
+                              return SelectableText('Profile ID: $profileId');
+                            },
+                          ),
                         ],
                       ),
                     ),

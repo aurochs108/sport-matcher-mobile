@@ -25,6 +25,8 @@ class CreatedProfileScreenModel extends ChangeNotifier {
     return await _profilesRepository.loadProfile();
   }
 
+  Future<String?> get profileIdFuture => _profilesRepository.loadProfileId();
+
   void reloadProfile() {
     profileFuture = _loadProfile();
     onStateChanged?.call();
