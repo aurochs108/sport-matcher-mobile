@@ -47,8 +47,10 @@ void main() {
     test('should activate button when both validators return null', () {
       // given
       final expectedEmail = Uuid().v4();
+      when(emailValidator.validate("")).thenReturn(null);
       when(emailValidator.validate(expectedEmail)).thenReturn(null);
       final expectedPassword = Uuid().v4();
+      when(passwordValidator.validate("")).thenReturn(null);
       when(passwordValidator.validate(expectedPassword)).thenReturn(null);
 
       // when
@@ -127,8 +129,10 @@ void main() {
       () {
         // given
         final expectedEmail = Uuid().v4();
+        when(emailValidator.validate("")).thenReturn(null);
         when(emailValidator.validate(expectedEmail)).thenReturn(null);
         final validPassword = Uuid().v4();
+        when(passwordValidator.validate("")).thenReturn(null);
         when(passwordValidator.validate(validPassword)).thenReturn(null);
         final invalidPassword = Uuid().v4();
         when(

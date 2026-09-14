@@ -1,3 +1,5 @@
+import 'package:sport_matcher/data/core/api_request/api_result.dart';
+import 'package:sport_matcher/data/profile/domain/profile_domain.dart';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -5,6 +7,8 @@ import 'package:mockito/mockito.dart';
 import 'package:sport_matcher/data/profile/config/activities_config.dart';
 import 'package:sport_matcher/data/profile/persistence/database/abstract_profile_database.dart';
 import 'package:sport_matcher/data/profile/persistence/database/profile_database.dart';
+import 'package:sport_matcher/data/profile/network/profile_api.dart';
+import 'package:sport_matcher/data/profile/persistence/profile_id_store.dart';
 import 'package:sport_matcher/data/profile/repository/profiles_repository.dart';
 
 import '../../../random/profile_domain_random.dart';
@@ -19,7 +23,11 @@ void main() {
 
     setUp(() {
       profileDatabase = MockAbstractProfileDatabase();
-      sut = ProfilesRepository(profileDatabase: profileDatabase);
+      sut = ProfilesRepository(
+        profileDatabase: profileDatabase,
+        profileApi: _ProfileApi(),
+        profileIdStore: _ProfileIdStore(),
+      );
     });
 
     // MARK: - addProfile
@@ -85,4 +93,16 @@ void main() {
       },
     );
   });
+}
+
+class _ProfileApi extends ProfileApi {
+  @override
+  Future<ApiResult<String>> createProfile(ProfileDomain profile) async {
+    return const ApiSuccess('profile-id');
+  }
+}
+
+class _ProfileIdStore extends ProfileIdStore {
+  @override
+  Future<void> save(String profileId) async {}
 }

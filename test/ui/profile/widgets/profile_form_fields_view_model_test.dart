@@ -94,10 +94,7 @@ void main() {
       sut.dispose();
 
       // then
-      expect(
-        () => sut.nameTextController.text = Uuid().v4(),
-        throwsFlutterError,
-      );
+      expect(() => sut.nameTextController.text = Uuid().v4(), throwsA(isA<StateError>()));
     });
 
     // MARK: - pickImage

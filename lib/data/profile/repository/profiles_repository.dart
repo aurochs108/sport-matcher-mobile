@@ -27,6 +27,7 @@ class ProfilesRepository {
     switch (result) {
       case ApiSuccess(:final data):
         await _profileIdStore.save(data);
+        break;
       case ApiError():
         throw ProfileCreationException(result.message);
     }
@@ -40,13 +41,13 @@ class ProfilesRepository {
       return null;
     }
 
-    class ProfileCreationException implements Exception {
-      final String message;
-      const ProfileCreationException(this.message);
-    }
-
     return _mapper.toDomain(profileEntity);
   }
 
   Future<String?> loadProfileId() => _profileIdStore.load();
+}
+
+class ProfileCreationException implements Exception {
+  final String message;
+  const ProfileCreationException(this.message);
 }
