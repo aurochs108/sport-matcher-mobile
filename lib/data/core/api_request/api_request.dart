@@ -18,6 +18,7 @@ class ApiRequest<T> {
   final Map<String, dynamic>? body;
   final T Function(Map<String, dynamic>)? responseParser;
   final Duration timeout;
+  final String? baseUrl;
   final http.Client _client;
   final ApiErrorToUserMessageMapper _errorMapper;
 
@@ -26,6 +27,7 @@ class ApiRequest<T> {
     required this.method,
     this.responseParser,
     this.body,
+    this.baseUrl,
     this.timeout = const Duration(seconds: 30),
     http.Client? client,
     ApiErrorToUserMessageMapper? errorMapper,
@@ -34,7 +36,7 @@ class ApiRequest<T> {
 
   Future<ApiResult<T>> execute() async {
     try {
-      final url = Uri.parse('${ApiConfig.baseUrl}$path');
+      final url = Uri.parse('${baseUrl ?? ApiConfig.authBaseUrl}$path');
       final headers = {
         'Content-Type': 'application/json',
       };

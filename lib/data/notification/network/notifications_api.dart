@@ -1,3 +1,4 @@
+import 'package:sport_matcher/config/api_config.dart';
 import 'package:sport_matcher/data/core/api_request/api_request.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
 import 'package:sport_matcher/data/core/api_request/http_method.dart';
@@ -12,6 +13,7 @@ class NotificationsApi {
     if (cursor != null) query['cursor'] = cursor;
     return ApiRequest<NotificationsPage>(
       path: '/profiles/$profileId/notifications?${Uri(queryParameters: query).query}',
+      baseUrl: ApiConfig.profilesBaseUrl,
       method: HttpMethod.get,
       responseParser: NotificationsPage.fromJson,
     ).execute();
