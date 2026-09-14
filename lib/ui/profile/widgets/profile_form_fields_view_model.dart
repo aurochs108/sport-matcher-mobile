@@ -99,10 +99,9 @@ class ProfileFormFieldsViewModel {
 
     if (!_hasImage || !hasName || !_hasSelectedActivities) return null;
 
-    return () {
-      _saveProfile().then((_) {
-        onSaved();
-      });
+    return () async {
+      final savedProfile = await _saveProfile();
+      if (savedProfile) onSaved();
     };
   }
 
@@ -111,7 +110,7 @@ class ProfileFormFieldsViewModel {
   bool get _hasSelectedActivities =>
       _activities.values.any((isSelected) => isSelected);
 
-  Future<void> _saveProfile() async {
+  Future<bool> _saveProfile() async {
     final imagePath = _pickedImage?.path;
     final profile = ProfileDomain(
       name: nameTextController.text,
@@ -119,6 +118,7 @@ class ProfileFormFieldsViewModel {
       activities: Map<ActivitiesConfig, bool>.from(_activities),
     );
     await _profileRepository.addProfile(profile);
+    return true;
   }
 
   void dispose() {

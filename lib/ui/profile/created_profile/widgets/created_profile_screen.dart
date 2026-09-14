@@ -4,6 +4,7 @@ import 'package:sport_matcher/ui/core/theme/app_theme.dart';
 import 'package:sport_matcher/ui/core/ui/buttons/async_rounded_button/async_rounded_button.dart';
 import 'package:sport_matcher/ui/core/ui/buttons/rounded_button/rounded_button.dart';
 import 'package:sport_matcher/ui/profile/widgets/profile_fields_view.dart';
+import 'package:sport_matcher/ui/notifications/notification_center_screen.dart';
 import 'created_profile_screen_model.dart';
 
 class CreatedProfileScreen extends StatefulWidget {
@@ -34,6 +35,15 @@ class _CreatedProfileScreenState extends State<CreatedProfileScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: const Text("Profile"),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications_outlined),
+              tooltip: 'Notifications',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const NotificationCenterScreen()),
+              ),
+            ),
+          ],
         ),
         body: Padding(
           padding: AppTheme.horizontalAndBottomPadding(context),

@@ -39,6 +39,7 @@ class ApiRequest<T> {
         'Content-Type': 'application/json',
       };
       final response = await switch (method) {
+        HttpMethod.get => _client.get(url, headers: headers),
         HttpMethod.post => _client.post(
             url,
             headers: headers,
