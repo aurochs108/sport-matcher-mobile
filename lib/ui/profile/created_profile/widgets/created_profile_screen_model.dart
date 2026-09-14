@@ -27,6 +27,13 @@ class CreatedProfileScreenModel extends ChangeNotifier {
 
   Future<String?> get profileIdFuture => _profilesRepository.loadProfileId();
 
+  Future<void> logProfileId() async {
+    final profileId = await profileIdFuture;
+    if (profileId != null) {
+      debugPrint('Profile UUID: $profileId');
+    }
+  }
+
   void reloadProfile() {
     profileFuture = _loadProfile();
     onStateChanged?.call();
