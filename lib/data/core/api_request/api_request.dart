@@ -31,26 +31,27 @@ class ApiRequest<T> {
     this.timeout = const Duration(seconds: 30),
     http.Client? client,
     ApiErrorToUserMessageMapper? errorMapper,
-  })  : _client = client ?? HttpClientProvider.instance,
-        _errorMapper = errorMapper ?? const ApiErrorToUserMessageMapper();
+  }) : _client = client ?? HttpClientProvider.instance,
+       _errorMapper = errorMapper ?? const ApiErrorToUserMessageMapper();
 
   Future<ApiResult<T>> execute() async {
     try {
       final url = Uri.parse('${baseUrl ?? ApiConfig.authBaseUrl}$path');
-      final headers = {
-        'Content-Type': 'application/json',
-      };
+      final headers = {'Content-Type': 'application/json'};
       final response = await switch (method) {
         HttpMethod.get => _client.get(url, headers: headers),
         HttpMethod.post => _client.post(
-            url,
-            headers: headers,
-            body: body != null ? jsonEncode(body) : null,
-          ),
+          url,
+          headers: headers,
+          body: body != null ? jsonEncode(body) : null,
+        ),
+        HttpMethod.delete => _client.delete(url, headers: headers),
       }.timeout(timeout);
 
       if (kDebugMode) {
-        debugPrint('ApiRequest [$path] ${response.statusCode}: ${response.body}');
+        debugPrint(
+          'ApiRequest [$path] ${response.statusCode}: ${response.body}',
+        );
       }
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -86,10 +87,12 @@ class ApiRequest<T> {
     try {
       final errorResponse = ErrorResponse.fromJson(jsonDecode(response.body));
       return ApiError(
-        _errorMapper.map(ApiException(
-          statusCode: response.statusCode,
-          errorResponse: errorResponse,
-        )),
+        _errorMapper.map(
+          ApiException(
+            statusCode: response.statusCode,
+            errorResponse: errorResponse,
+          ),
+        ),
         statusCode: response.statusCode,
         code: errorResponse.code,
       );

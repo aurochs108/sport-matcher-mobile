@@ -4,15 +4,19 @@ import 'package:sport_matcher/data/notification/domain/notification_domain.dart'
 import 'package:sport_matcher/data/notification/repository/notifications_repository.dart';
 
 class NotificationCenterScreen extends StatefulWidget {
-  const NotificationCenterScreen({super.key});
+  final NotificationsRepository? repository;
+
+  const NotificationCenterScreen({super.key, this.repository});
 
   @override
-  State<NotificationCenterScreen> createState() => _NotificationCenterScreenState();
+  State<NotificationCenterScreen> createState() =>
+      _NotificationCenterScreenState();
 }
 
 class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
-  final _repository = NotificationsRepository();
+  late final NotificationsRepository _repository;
   final _notifications = <NotificationDomain>[];
+  final _deletingNotificationIds = <String>{};
   String? _nextCursor;
   String? _error;
   bool _loading = true;
@@ -21,6 +25,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   @override
   void initState() {
     super.initState();
+    _repository = widget.repository ?? NotificationsRepository();
     _load();
   }
 
@@ -33,7 +38,9 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
         _error = null;
       }
     });
-    final result = await _repository.load(cursor: nextPage ? _nextCursor : null);
+    final result = await _repository.load(
+      cursor: nextPage ? _nextCursor : null,
+    );
     if (!mounted) return;
     setState(() {
       _loading = false;
@@ -51,6 +58,24 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
     });
   }
 
+  Future<void> _deleteNotification(NotificationDomain notification) async {
+    if (_deletingNotificationIds.contains(notification.id)) return;
+    setState(() => _deletingNotificationIds.add(notification.id));
+    final result = await _repository.delete(notification.id);
+    if (!mounted) return;
+    setState(() {
+      _deletingNotificationIds.remove(notification.id);
+      if (result is ApiSuccess<void>) {
+        _notifications.removeWhere((item) => item.id == notification.id);
+      }
+    });
+    if (result case ApiError(:final message)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,11 +84,14 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _error != null
           ? Center(
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Text(_error!),
-                const SizedBox(height: 12),
-                ElevatedButton(onPressed: _load, child: const Text('Retry')),
-              ]),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(_error!),
+                  const SizedBox(height: 12),
+                  ElevatedButton(onPressed: _load, child: const Text('Retry')),
+                ],
+              ),
             )
           : _notifications.isEmpty
           ? const Center(child: Text('No notifications yet.'))
@@ -71,18 +99,54 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
               children: [
                 for (final notification in _notifications)
                   ListTile(
-                    leading: Icon(notification.read ? Icons.notifications_none : Icons.notifications),
+                    leading: Icon(
+                      notification.read
+                          ? Icons.notifications_none
+                          : Icons.notifications,
+                    ),
                     title: Text(notification.title),
                     subtitle: Text(notification.message),
-                    trailing: Text(MaterialLocalizations.of(context).formatShortDate(notification.createdAt)),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          MaterialLocalizations.of(
+                            context,
+                          ).formatShortDate(notification.createdAt),
+                        ),
+                        PopupMenuButton<String>(
+                          key: ValueKey('notification-menu-${notification.id}'),
+                          enabled: !_deletingNotificationIds.contains(
+                            notification.id,
+                          ),
+                          onSelected: (action) {
+                            if (action == 'delete') {
+                              _deleteNotification(notification);
+                            }
+                          },
+                          itemBuilder: (context) => const [
+                            PopupMenuItem(
+                              value: 'delete',
+                              child: Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 if (_nextCursor != null)
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: ElevatedButton(
-                      onPressed: _loadingMore ? null : () => _load(nextPage: true),
+                      onPressed: _loadingMore
+                          ? null
+                          : () => _load(nextPage: true),
                       child: _loadingMore
-                          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator())
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(),
+                            )
                           : const Text('Load more'),
                     ),
                   ),

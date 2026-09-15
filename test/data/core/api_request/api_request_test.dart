@@ -71,9 +71,38 @@ void main() {
       final result = await sut.execute();
 
       expect(capturedRequest.method, 'POST');
-      expect(capturedRequest.body, jsonEncode({'refreshToken': 'refresh-token'}));
+      expect(
+        capturedRequest.body,
+        jsonEncode({'refreshToken': 'refresh-token'}),
+      );
       expect(result, isA<ApiSuccess<void>>());
     });
+
+    test(
+      'execute sends DELETE request and accepts no-content response',
+      () async {
+        late http.Request capturedRequest;
+        final client = MockClient((request) async {
+          capturedRequest = request;
+          return http.Response('', 204);
+        });
+        final sut = ApiRequest<void>(
+          path: '/profiles/profile-id/notifications/notification-id',
+          method: HttpMethod.delete,
+          baseUrl: ApiConfig.profilesBaseUrl,
+          client: client,
+        );
+
+        final result = await sut.execute();
+
+        expect(capturedRequest.method, 'DELETE');
+        expect(
+          capturedRequest.url.toString(),
+          '${ApiConfig.profilesBaseUrl}/profiles/profile-id/notifications/notification-id',
+        );
+        expect(result, isA<ApiSuccess<void>>());
+      },
+    );
 
     test(
       'execute returns mapped error with status code when success body cannot be parsed',

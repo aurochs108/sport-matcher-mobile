@@ -12,10 +12,22 @@ class NotificationsApi {
     final query = <String, String>{'limit': '20'};
     if (cursor != null) query['cursor'] = cursor;
     return ApiRequest<NotificationsPage>(
-      path: '/profiles/$profileId/notifications?${Uri(queryParameters: query).query}',
+      path:
+          '/profiles/$profileId/notifications?${Uri(queryParameters: query).query}',
       baseUrl: ApiConfig.profilesBaseUrl,
       method: HttpMethod.get,
       responseParser: NotificationsPage.fromJson,
+    ).execute();
+  }
+
+  Future<ApiResult<void>> deleteNotification({
+    required String profileId,
+    required String notificationId,
+  }) {
+    return ApiRequest<void>(
+      path: '/profiles/$profileId/notifications/$notificationId',
+      baseUrl: ApiConfig.profilesBaseUrl,
+      method: HttpMethod.delete,
     ).execute();
   }
 }

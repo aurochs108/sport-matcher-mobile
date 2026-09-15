@@ -16,8 +16,26 @@ class NotificationsRepository {
   Future<ApiResult<NotificationsPage>> load({String? cursor}) async {
     final profileId = await _profilesRepository.loadProfileId();
     if (profileId == null) {
-      return const ApiError('Profile ID is unavailable. Please create your profile again.');
+      return const ApiError(
+        'Profile ID is unavailable. Please create your profile again.',
+      );
     }
-    return _notificationsApi.getNotifications(profileId: profileId, cursor: cursor);
+    return _notificationsApi.getNotifications(
+      profileId: profileId,
+      cursor: cursor,
+    );
+  }
+
+  Future<ApiResult<void>> delete(String notificationId) async {
+    final profileId = await _profilesRepository.loadProfileId();
+    if (profileId == null) {
+      return const ApiError(
+        'Profile ID is unavailable. Please create your profile again.',
+      );
+    }
+    return _notificationsApi.deleteNotification(
+      profileId: profileId,
+      notificationId: notificationId,
+    );
   }
 }
