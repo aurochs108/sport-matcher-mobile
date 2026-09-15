@@ -6,6 +6,7 @@ import 'package:http/testing.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:sport_matcher/config/api_config.dart';
+import 'package:sport_matcher/config/profile_api_config.dart';
 import 'package:sport_matcher/data/core/api_request/api_exception.dart';
 import 'package:sport_matcher/data/core/api_request/api_request.dart';
 import 'package:sport_matcher/data/core/api_request/api_result.dart';
@@ -71,8 +72,33 @@ void main() {
       final result = await sut.execute();
 
       expect(capturedRequest.method, 'POST');
-      expect(capturedRequest.body, jsonEncode({'refreshToken': 'refresh-token'}));
+      expect(
+        capturedRequest.body,
+        jsonEncode({'refreshToken': 'refresh-token'}),
+      );
       expect(result, isA<ApiSuccess<void>>());
+    });
+
+    test('execute sends requests to the configured profile service', () async {
+      late http.Request capturedRequest;
+      final client = MockClient((request) async {
+        capturedRequest = request;
+        return http.Response(jsonEncode({'value': 'parsed value'}), 200);
+      });
+      final sut = ApiRequest<String>(
+        path: '/profiles/profile-id',
+        baseUrl: ProfileApiConfig.baseUrl,
+        method: HttpMethod.post,
+        responseParser: (json) => json['value'] as String,
+        client: client,
+      );
+
+      await sut.execute();
+
+      expect(
+        capturedRequest.url.toString(),
+        '${ProfileApiConfig.baseUrl}/profiles/profile-id',
+      );
     });
 
     test(
